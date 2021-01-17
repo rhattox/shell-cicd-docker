@@ -1,12 +1,44 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Docker automated CI/CD is starting..."
 
-fl=$1
+#Starts build script
 
-echo "Your entry is: $fl?"
+start_swarm() {
+    echo "Start:"
+}
 
-$fl
+stop_swarm() {
+    echo "Stop:"
+}
 
-SCRIPT=$1
+status_swarm() {
+    echo "Status:"
+}
 
+deploy_swarm(){
+    echo "Deploy:"
+}
+
+args=("$@")
+
+echo Number of arguments: $#
+first_arg=${args[0]}
+echo 1st argument: $first_arg
+
+
+case ${args[0]} in
+start)
+    start_swarm
+    ;;
+stop)
+    stop_swarm
+    ;;
+status)
+    status_swarm
+    ;;
+deploy)
+    deploy_swarm
+    ;;
+*) echo "Invalid Option!!" ;;
+esac
