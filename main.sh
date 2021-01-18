@@ -38,8 +38,6 @@ arg_3=${args[3]}
 
 arg_4=${args[4]}
 
-
-
 case ${args[0]} in
 start)
     start_swarm
