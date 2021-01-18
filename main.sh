@@ -17,14 +17,27 @@ status_swarm() {
 }
 
 deploy_swarm(){
-    echo "Deploy:"
+    echo $arg_0
+    echo $arg_1
+    echo $arg_2
+    echo $arg_3
+
+    sudo bash deploy.sh $arg_1 $arg_2 $arg_3 $arg_4
 }
 
 args=("$@")
 
 echo Number of arguments: $#
-first_arg=${args[0]}
-echo 1st argument: $first_arg
+arg_0=${args[0]}
+
+arg_1=${args[1]}
+
+arg_2=${args[2]}
+
+arg_3=${args[3]}
+
+arg_4=${args[4]}
+
 
 
 case ${args[0]} in
