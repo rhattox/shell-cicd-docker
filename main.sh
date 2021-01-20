@@ -38,43 +38,48 @@ configure_app_first_time(){
     echo "Projects HTTPS with '.git' statement in final"
     read GIT_HTTPS
 }
-
+copy_git_source(){
+    cd $MAIN_FOLDER_DEPLOY
+    git clone $GIT_HTTPS
+}
 save(){
-    echo "Creating folders...."
-    if [[ -d $MAIN_FOLDER_DEPLOY_APP ]]; then
-        echo "Path $MAIN_FOLDER_DEPLOY_APP already exists"
-        echo "deleting..."
-        sudo rm -rf $MAIN_FOLDER_DEPLOY_APP
-        echo "Creating $MAIN_FOLDER_DEPLOY_APP"
-        sudo mkdir  -p $MAIN_FOLDER_DEPLOY_APP
-    else
-        echo "Creating $MAIN_FOLDER_DEPLOY_APP"
-        sudo mkdir  -p $MAIN_FOLDER_DEPLOY_APP
-    fi
+    copy_git_source
+    if [[ $MAIN_FOLDER_DEPLOY_APP = $MAIN_FOLDER_DEPLOY/$MAIN_APP_NAME ]]; then
+        echo "Creating folders...."
+        if [[ -d $MAIN_FOLDER_DEPLOY_APP ]]; then
+            echo "Path $MAIN_FOLDER_DEPLOY_APP already exists"
+            echo "deleting..."
+            sudo rm -rf $MAIN_FOLDER_DEPLOY_APP
+            echo "Creating $MAIN_FOLDER_DEPLOY_APP"
+            copy_git_source
+        else
+            echo "Creating $MAIN_FOLDER_DEPLOY_APP"
+            copy_git_source
+        fi
 
-    if [[ -d $MAIN_FOLDER_VOLUME_APP ]]; then
-        echo "Path $MAIN_FOLDER_VOLUME_APP already exists"
-        echo "deleting..."
-        sudo rm -rf $MAIN_FOLDER_VOLUME_APP
-        echo "Creating $MAIN_FOLDER_VOLUME_APP"
-        sudo mkdir  -p $MAIN_FOLDER_VOLUME_APP
-    else
-        echo "Creating $MAIN_FOLDER_VOLUME_APP"
-        sudo mkdir  -p $MAIN_FOLDER_VOLUME_APP
-    fi
-    echo "saving it...."
-    if [[ -d $MAIN_FOLDER_DEPLOY_APP ]]; then
-        cd $MAIN_FOLDER_DEPLOY_APP
-        echo "MAIN_FOLDER_DEPLOY=$MAIN_FOLDER_DEPLOY" >> .env
-        echo "MAIN_FOLDER_VOLUME=$MAIN_FOLDER_VOLUME" >> .env
-        echo "MAIN_APP_NAME=$MAIN_APP_NAME" >> .env
-        echo "MAIN_FOLDER_DEPLOY_APP=$MAIN_FOLDER_DEPLOY_APP" >> .env
-        echo "MAIN_FOLDER_VOLUME_APP=$MAIN_FOLDER_VOLUME_APP" >> .env
-    else
-        echo "Error folder $MAIN_FOLDER_DEPLOY_APP does not exists"
-        exit 1
-    fi
-    
+        if [[ -d $MAIN_FOLDER_VOLUME_APP ]]; then
+            echo "Path $MAIN_FOLDER_VOLUME_APP already exists"
+            echo "deleting..."
+            sudo rm -rf $MAIN_FOLDER_VOLUME_APP
+            echo "Creating $MAIN_FOLDER_VOLUME_APP"
+            sudo mkdir  -p $MAIN_FOLDER_VOLUME_APP
+        else
+            echo "Creating $MAIN_FOLDER_VOLUME_APP"
+            sudo mkdir  -p $MAIN_FOLDER_VOLUME_APP
+        fi
+        echo "saving it...."
+        if [[ -d $MAIN_FOLDER_DEPLOY_APP ]]; then
+            cd $MAIN_FOLDER_DEPLOY_APP
+            echo "MAIN_FOLDER_DEPLOY=$MAIN_FOLDER_DEPLOY" >> .env
+            echo "MAIN_FOLDER_VOLUME=$MAIN_FOLDER_VOLUME" >> .env
+            echo "MAIN_APP_NAME=$MAIN_APP_NAME" >> .env
+            echo "MAIN_FOLDER_DEPLOY_APP=$MAIN_FOLDER_DEPLOY_APP" >> .env
+            echo "MAIN_FOLDER_VOLUME_APP=$MAIN_FOLDER_VOLUME_APP" >> .env
+        else
+            echo "Error folder $MAIN_FOLDER_DEPLOY_APP does not exists"
+            exit 1
+        fi
+    fi   
 }
 
 confirm(){
@@ -114,4 +119,4 @@ echo "Docker automated CI/CD is starting..."
 ask_first_config
 ask_config_new_app
 confirm
-# adicionar start.sh stop.sh status.sh clean.sh
+# adicionar deploy.sh start.sh stop.sh status.sh clean.sh
