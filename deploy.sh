@@ -62,12 +62,13 @@ echo "FILE .env CREATED WITH SUCESS!"
 ##############################
 
 echo "Stating to configure the aplication."
+#/opt/docker/deploy
 MAIN_FOLDER_DEPLOY=$1
+#/opt/docker/volume
 MAIN_FOLDER_VOLUME=$2
 MAIN_APP_NAME=$3
 GIT_HTTPS=https://$4
 MAIN_FOLDER_DEPLOY_APP=$MAIN_FOLDER_DEPLOY/$MAIN_APP_NAME
 MAIN_FOLDER_VOLUME_APP=$MAIN_FOLDER_VOLUME/$MAIN_APP_NAME
-
 create_folders
 create_env
