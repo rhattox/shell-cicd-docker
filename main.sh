@@ -45,6 +45,8 @@ save(){
         echo "Path $MAIN_FOLDER_DEPLOY_APP already exists"
         echo "deleting..."
         sudo rm -rf $MAIN_FOLDER_DEPLOY_APP
+        echo "Creating $MAIN_FOLDER_DEPLOY_APP"
+        sudo mkdir  -p $MAIN_FOLDER_DEPLOY_APP
     else
         echo "Creating $MAIN_FOLDER_DEPLOY_APP"
         sudo mkdir  -p $MAIN_FOLDER_DEPLOY_APP
@@ -54,6 +56,8 @@ save(){
         echo "Path $MAIN_FOLDER_VOLUME_APP already exists"
         echo "deleting..."
         sudo rm -rf $MAIN_FOLDER_VOLUME_APP
+        echo "Creating $MAIN_FOLDER_VOLUME_APP"
+        sudo mkdir  -p $MAIN_FOLDER_VOLUME_APP
     else
         echo "Creating $MAIN_FOLDER_VOLUME_APP"
         sudo mkdir  -p $MAIN_FOLDER_VOLUME_APP
@@ -110,3 +114,4 @@ echo "Docker automated CI/CD is starting..."
 ask_first_config
 ask_config_new_app
 confirm
+# adicionar start.sh stop.sh status.sh clean.sh
