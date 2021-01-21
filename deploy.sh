@@ -3,72 +3,50 @@
 ##################################
 ##########   FUNCIONS   ##########
 ##################################
-copy_git_source(){
-    cd $MAIN_FOLDER_DEPLOY
-    git clone $GIT_HTTPS
-}
-
-create_folders(){
-if [[ -d $MAIN_FOLDER_DEPLOY_APP &&  -d $MAIN_FOLDER_VOLUME_APP ]]; then
-    
-    if [ -d $MAIN_FOLDER_DEPLOY_APP ]; then
-        echo "Folder $MAIN_FOLDER_DEPLOY_APP already exists. Clean your previous installation before install." 
-        echo -e "CAUTION!! SAVE ALL YOUR DATA BEFORE PROCEDE \nEXECUTE: $ rm -rf $MAIN_FOLDER_DEPLOY_APP"
-    fi
-    
-    if [ -d $MAIN_FOLDER_VOLUME_APP ]; then
-        echo "Folder $MAIN_FOLDER_VOLUME_APP already exists. Clean your previous installation before install." 
-        echo -e "CAUTION!! SAVE ALL YOUR DATA BEFORE PROCEDE \nEXECUTE: $ rm -rf $MAIN_FOLDER_VOLUME_APP"
-    fi
-        exit 1
-else
-    copy_git_source
-    mkdir -p $MAIN_FOLDER_VOLUME_APP
-    #mkdir -p $MAIN_FOLDER_DEPLOY_APP
-    echo "ALL FOLDERS CREATED WITH SUCESS!"
-fi
-}
-
-create_env(){
-    
-ENV_FILE=.env
-
-cd $MAIN_FOLDER_DEPLOY_APP
-
-if test -f "$ENV_FILE"; then
-    echo "File $ENV_FILE exists."
-    rm -f $ENV_FILE
-    echo "Recreating..."
-    touch $ENV_FILE
-else
-    echo "File $ENV_FILE do not exists."
-    touch $ENV_FILE
-    echo "Creating..."
-fi
-
-
-echo "MAIN_FOLDER_DEPLOY=$MAIN_FOLDER_DEPLOY" >> .env
-echo "MAIN_FOLDER_VOLUME=$MAIN_FOLDER_VOLUME" >> .env
-echo "MAIN_APP_NAME=$MAIN_APP_NAME" >> .env
-echo "MAIN_FOLDER_DEPLOY_APP=$MAIN_FOLDER_DEPLOY_APP" >> .env
-echo "MAIN_FOLDER_VOLUME_APP=$MAIN_FOLDER_VOLUME_APP" >> .env
-
-echo "FILE .env CREATED WITH SUCESS!"
-
-}
 
 ##############################
 ##########   MAIN   ##########
 ##############################
 
-echo "Stating to configure the aplication."
-#/opt/docker/deploy
-MAIN_FOLDER_DEPLOY=$1
-#/opt/docker/volume
-MAIN_FOLDER_VOLUME=$2
-MAIN_APP_NAME=$3
-GIT_HTTPS=https://$4
-MAIN_FOLDER_DEPLOY_APP=$MAIN_FOLDER_DEPLOY/$MAIN_APP_NAME
-MAIN_FOLDER_VOLUME_APP=$MAIN_FOLDER_VOLUME/$MAIN_APP_NAME
-create_folders
-create_env
+if [[ -f ./.env ]]; then
+    echo "Founded .env"
+else 
+    echo "Not found .env" 
+    exit 1
+fi
+
+
+echo "Is docker-swarm.yml inside any other folder from git's folder (y) or is already in the 'MAIN' git's folder (n)?" 
+read ANSWER
+
+if [[ $ANSWER = 'y' ]]; then
+    echo "Enter docker-swarm.yml path" 
+    read MAIN_FOLDER_STACK
+    if [[ -d $MAIN_FOLDER_STACK ]]; then
+        if [[ -f $MAIN_FOLDER_STACK/local.env ]]; then
+            echo "Founded local.env!"
+            echo "Reading local.env!"
+            while IFS= read -r line;do
+                echo "$line" >> $MAIN_FOLDER_STACK/.env
+            done < "$MAIN_FOLDER_STACK/local.env"
+            echo "Arquivo salvo."
+
+                if [[ -f $MAIN_FOLDER_STACK/.env ]]; then
+                    echo "Reading .env!"
+                    while IFS= read -r line;do
+                    echo "$line" >> $MAIN_FOLDER_STACK/.env
+                    done < "./.env"
+                    echo "Arquivo salvo."
+                else 
+                    echo "Not found local.env" 
+                    exit 1
+                fi
+        else 
+            echo "Not found local.env" 
+            exit 1
+        fi
+    fi
+else 
+echo "error" 
+fi
+
