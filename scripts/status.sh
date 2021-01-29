@@ -4,7 +4,7 @@
 cols=$(tput cols)
 middle_of_screen=$(expr $cols / 3)
 load_env(){
-    source ./.load_env
+    source ./.env
     APP_NAME=$APP_NAME
 }
 entry_screen() {
