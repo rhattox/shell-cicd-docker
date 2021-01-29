@@ -57,7 +57,7 @@ create_volume() {
 }
 
 copy_scripts(){
-   cp -a $HOME_PATH/status.sh $HOME_PATH/start.sh $HOME_PATH/logs.sh $PATH_DEPLOYMENT/$APP_NAME
+   cp -a $HOME_PATH/status.sh $HOME_PATH/start.sh $HOME_PATH/logs.sh $HOME_PATH/stop.sh $PATH_DEPLOYMENT/$APP_NAME
 }
 
 entry_screen() {
