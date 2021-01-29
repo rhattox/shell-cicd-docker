@@ -5,6 +5,3 @@ RUN apk update && \
     apk add bash
 RUN apk update && \
     rc-update add docker boot
-COPY ./main.sh / 
-
-RUN chmod 700 /main.sh
