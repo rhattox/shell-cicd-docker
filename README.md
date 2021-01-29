@@ -16,4 +16,26 @@ For that was made 5 scripts:
 
 # Usage
 
-* Deploying your first application:
+### Deploying your first application:
+
+* deploy.sh needs 4 inputs
+    - 
+    - https to clone github
+    - name of project from github
+    - dir to deploy git file + scripts to manage stack
+    - dir to deploy volume of stack
+
+    ![](./gifs/deploy.gif)
+
+
+### Using your first deploy:
+* start.sh / stop.sh
+    - 
+    - No inputs, just execute to starts or stop the stack
+* logs.sh / status.sh
+    -
+    - No inputs, just execute to get info of application
+    
+    ![](./gifs/usage.gif)
+
+
