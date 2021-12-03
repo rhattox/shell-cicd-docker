@@ -1,14 +1,11 @@
-FROM alpine:3.15
-RUN apk update && \
-    apk add openrc && \
-    apk add docker && \
-    apk add bash
-RUN rc-update add docker boot
+FROM docker:20.10.11-git
+
+RUN apk update 
+
+RUN apk add bash
+
+RUN addgroup docker -g 998 
 
 COPY --chown=root:root ./installer /installer
 
-COPY --chown=root:root ./scripts /scripts
-
-RUN chmod 700 -R /scripts
-
-ENTRYPOINT [ "/scripts/cicd_docker.sh" ]
+RUN chmod 700 -R /installer

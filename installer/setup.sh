@@ -1,48 +1,67 @@
 #!/bin/bash
 
-HOME_PATH=~/shell_cicd_docker
-HOME_PATH_SCRIPTS=$HOME_PATH/scripts
-HOME_PATH_FILE=$HOME_PATH/shell_cicd_docker.properties
-LOCAL_FILE=./shell_cicd_docker.properties
-LOCAL_SCRIPT_LOGS=../scripts/logs.sh
-LOCAL_SCRIPT_START=../scripts/start.sh
-LOCAL_SCRIPT_STATUS=../scripts/status.sh
-LOCAL_SCRIPT_STOP=../scripts/stop.sh
-LOCAL_SCRIPT_FIRST_DEPLOY=../scripts/first_deploy.sh
+#GLOBAL COLS
+cols=$(tput cols)
+middle_of_screen=$(expr $cols / 3)
 
-source $LOCAL_FILE
+HOME_PATH=/installer
+LOCAL_CONFIG_FILE=$HOME_PATH/shell_cicd_docker.properties
+LOCAL_SCRIPT_LOGS=$HOME_PATH/logs.sh
+LOCAL_SCRIPT_START=$HOME_PATH/start.sh
+LOCAL_SCRIPT_STATUS=$HOME_PATH/status.sh
+LOCAL_SCRIPT_STOP=$HOME_PATH/stop.sh
+LOCAL_SCRIPT_FIRST_DEPLOY=$HOME_PATH/first_deploy.sh
+
+source $LOCAL_CONFIG_FILE
+
+init() {
+    if [ -f $LOCAL_CONFIG_FILE ]; then
+        for ((i = 0; i < cols; i++)); do printf "="; done
+        echo -e "Local shell_cicd_docker.properties do exists... OK"
+        for ((i = 0; i < cols; i++)); do printf "="; done
+        check_local_script_folder
+        for ((i = 0; i < cols; i++)); do printf "="; done
+        check_docker_base_dirs
+        for ((i = 0; i < cols; i++)); do printf "="; done
+        check_permissions_dirs
+        for ((i = 0; i < cols; i++)); do printf "="; done
+    else
+        echo -e "Local shell_cicd_docker.properties do NOT exists!!"
+        exit 1
+    fi
+}
 
 check_local_script_folder() {
     if [ ! -f $LOCAL_SCRIPT_LOGS ]; then
-        echo -e "Arquivo $LOCAL_SCRIPT_LOGS não existe!!"
+        echo -e "Arquivo $LOCAL_SCRIPT_LOGS do NOT exists!!"
         exit 1
     else
         echo -e "$LOCAL_SCRIPT_LOGS... OK"
     fi
 
     if [ ! -f $LOCAL_SCRIPT_START ]; then
-        echo -e "Arquivo $LOCAL_SCRIPT_START não existe!!"
+        echo -e "Arquivo $LOCAL_SCRIPT_START do NOT exists!!"
         exit 1
     else
         echo -e "$LOCAL_SCRIPT_START... OK"
     fi
 
     if [ ! -f $LOCAL_SCRIPT_STATUS ]; then
-        echo -e "Arquivo $LOCAL_SCRIPT_STATUS não existe!!"
+        echo -e "Arquivo $LOCAL_SCRIPT_STATUS do NOT exists!!"
         exit 1
     else
         echo -e "$LOCAL_SCRIPT_STATUS... OK"
     fi
 
     if [ ! -f $LOCAL_SCRIPT_STOP ]; then
-        echo -e "Arquivo $LOCAL_SCRIPT_STOP não existe!!"
+        echo -e "Arquivo $LOCAL_SCRIPT_STOP do NOT exists!!"
         exit 1
     else
         echo -e "$LOCAL_SCRIPT_STOP... OK"
     fi
 
     if [ ! -f $LOCAL_SCRIPT_FIRST_DEPLOY ]; then
-        echo -e "Arquivo $LOCAL_SCRIPT_FIRST_DEPLOY não existe!!"
+        echo -e "Arquivo $LOCAL_SCRIPT_FIRST_DEPLOY do NOT exists!!"
         exit 1
     else
         echo -e "$LOCAL_SCRIPT_FIRST_DEPLOY... OK"
@@ -50,89 +69,47 @@ check_local_script_folder() {
 
 }
 
-create_dir() {
-    if [ ! -d $APP_DOCKER_VOLUMES_DATA ]; then
-        sudo mkdir -p $APP_DOCKER_VOLUMES_DATA
+check_docker_base_dirs() {
+    if [ ! -d $DOCKER_VOLUMES_DATA ]; then
+        echo -e "Missing folder $DOCKER_VOLUMES_DATA"
+        exit 1
     fi
 
-    if [ ! -d $APP_DOCKER_VOLUMES_CONFIGS ]; then
-        sudo mkdir -p $APP_DOCKER_VOLUMES_CONFIGS
+    if [ ! -d $DOCKER_VOLUMES_CONFIGS ]; then
+        echo -e "Missing folder $DOCKER_VOLUMES_CONFIGS"
+        exit 1
     fi
 
-    if [ ! -d $APP_DOCKER_VOLUMES_LOGS ]; then
-        sudo mkdir -p $APP_DOCKER_VOLUMES_LOGS
+    if [ ! -d $DOCKER_VOLUMES_LOGS ]; then
+        echo -e "Missing folder $DOCKER_VOLUMES_LOGS"
+        exit 1
     fi
 
-    if [ ! -d $APP_DOCKER_STACKS ]; then
-        sudo mkdir -p $APP_DOCKER_STACKS
+    if [ ! -d $DOCKER_STACKS ]; then
+        echo -e "Missing folder $DOCKER_VOLUMES_STACKS"
+        exit 1
     fi
 
-    if [ ! -d $APP_DOCKER_APPS ]; then
-        sudo mkdir -p $APP_DOCKER_APPS
+    if [ ! -d $DOCKER_APPS ]; then
+        echo -e "Missing folder $DOCKER_VOLUMES_APPS"
+        exit 1
     fi
 }
 
-give_permissions_dirs() {
-    sudo chown -R $USER:docker $APP_DOCKER_ROOT
-}
-
-cp_file() {
-    mkdir $HOME_PATH
-    cp $LOCAL_FILE $HOME_PATH
-}
-
-cp_scripts() {
-    mkdir $HOME_PATH_SCRIPTS
-    cp -r $LOCAL_SCRIPT_LOGS $LOCAL_SCRIPT_START $LOCAL_SCRIPT_STOP $LOCAL_SCRIPT_STATUS $LOCAL_SCRIPT_FIRST_DEPLOY $HOME_PATH_SCRIPTS
-}
-
-do_install() {
-    cp_file
-    create_dir
-    cp_scripts
-    give_permissions_dirs
-    echo -e "Done!"
-}
-
-do_update() {
-    rm $HOME_PATH_FILE
-    rm -d $HOME_PATH
-    do_install
-}
-yes_or_not() {
-    while true; do
-        read -p "Do you wish to update?" yn
-        case $yn in
-        [Yy]*)
-            do_update
-            break
-            ;;
-        [Nn]*) exit ;;
-        *) echo "Please answer (y)es or (n)o." ;;
-        esac
-    done
-}
-
-check_local_properties_folder() {
-    if [ -f $HOME_PATH_FILE ]; then
-        echo -e "Already installed!"
-        yes_or_not
+check_permissions_dirs() {
+    if [[ $(stat -c "%a" "$DOCKER_ROOT") == "750" ]]; then
+        echo "DIR right permissions"
     else
-        echo -e "Beginnign of your first instalation..."
-        do_install
+        chown -R 750 $DOCKER_ROOT
+        echo "Defined new permissions"
+    fi
+
+    if [[ $(stat -c "%u" "$DOCKER_ROOT") == "root" && $(stat -c "%G" "$DOCKER_ROOT") == "docker" ]]; then
+        echo "DIR right permissions"
+    else
+        chown -R root:docker $DOCKER_ROOT
+        echo "Defined new permissions"
     fi
 }
-check_previous_installation() {
-    check_local_script_folder
-    check_local_properties_folder
-}
 
-if [ -f $LOCAL_FILE ]; then
-    echo -e "Local shell_cicd_docker.properties do exists... OK"
-    check_previous_installation
-else
-    echo -e "Local shell_cicd_docker.properties do NOT exists!!"
-    echo -e "This script needs to execute at same path as the shell_cicd_docker.properties!!"
-    echo -e "Try it again..."
-    exit 1
-fi
+init
