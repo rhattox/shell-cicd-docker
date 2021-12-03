@@ -20,7 +20,7 @@ test_dir_app() {
         exit 1
     else
         for ((i = 0; i < cols; i++)); do printf "="; done
-        echo -e "Application do not exists, creating home directory at: $APP_DOCKER_STACKS/$APP_NAME-$GIT_TAG "
+        echo -e "Application do not exists, creating home directory at: $APP_DOCKER_STACKS/$APP_NAME-$GIT_TAG"
         mkdir -p $APP_DOCKER_STACKS/$APP_NAME-$GIT_TAG
         for ((i = 0; i < cols; i++)); do printf "="; done
         copy_git_source
@@ -68,6 +68,12 @@ entry_screen() {
     echo -e "############################"
 }
 
+create_link() {
+    # cd
+    ln -s $APP_DOCKER_STACKS/$APP_NAME-$GIT_TAG $APP_DOCKER_APPS/$APP_NAME
+}
+
 entry_screen
 test_dir_app
 copy_scripts
+create_link
