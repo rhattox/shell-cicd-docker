@@ -3,9 +3,6 @@
 # basic variables
 SCRIPT_COLLUMNS=$1
 SCRIPT_MIDDLE_OF_SCREEN=$2
-# all services variables
-CMD=$3
-APP_NAME=$4
 
 HOME_PATH=/installer
 LOCAL_CONFIG_FILE=$HOME_PATH/shell_cicd_docker.properties

@@ -2,10 +2,11 @@
 
 SCRIPT_COLLUMNS=$(tput cols)
 SCRIPT_MIDDLE_OF_SCREEN=$(expr "$SCRIPT_COLLUMNS" / 3)
+
+# ARG FIXED
 CMD=$(basename "$0")
-APP_NAME=$1
-GIT_HTTPS=$2
-GIT_TAG=$3
+# OTHERS
+ARGS=("$@")
 
 if [[ -z "$CMD" ]]; then
     echo "Empty variable"
@@ -17,6 +18,13 @@ if [[ -z "$cols" ]]; then
     SCRIPT_MIDDLE_OF_SCREEN=$(expr "$SCRIPT_COLLUMNS" / 3)
 fi
 
-echo "Script local antes do container: $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG"
-
-docker run --rm -v /opt/docker:/opt/docker -v /var/run/docker.sock:/var/run/docker.sock shell_cicd_docker /bin/bash /installer/entrypoint.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
+if [[ "$CMD" == "first_deploy.sh" || "$CMD" == "setup.sh" || "$CMD" == "help.sh" ]]; then
+    docker run --rm -v /opt/docker:/opt/docker -v /var/run/docker.sock:/var/run/docker.sock shell_cicd_docker /bin/bash /installer/entrypoint.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD "${ARGS[@]}"
+else
+    if [[ -f ./.env ]]; then
+        docker run --rm -v /opt/docker:/opt/docker -v $(pwd)/.env:/root/.env -v /var/run/docker.sock:/var/run/docker.sock shell_cicd_docker /bin/bash /installer/entrypoint.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD
+    else
+        echo ".env not founded can't execute $CMD script, try to first_deploy.sh an application!!"
+        exit 1
+    fi
+fi

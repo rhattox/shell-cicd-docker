@@ -4,8 +4,8 @@
 SCRIPT_COLLUMNS=$1
 SCRIPT_MIDDLE_OF_SCREEN=$2
 # all services variables
-CMD=$3
-APP_NAME=$4
+APP_NAME=$3
+DOCKER_APP_FULL_PATH=$4
 
 entry_screen() {
     # clear the screen
@@ -14,20 +14,16 @@ entry_screen() {
     tput cup 3 $SCRIPT_MIDDLE_OF_SCREEN
     echo -e "############################"
     tput cup 4 $SCRIPT_MIDDLE_OF_SCREEN
-    echo -e "######  SCRIPT STATUS  #####"
+    echo -e "######  SCRIPT START  #####"
     tput cup 5 $SCRIPT_MIDDLE_OF_SCREEN
     echo -e "############################"
 }
 
-load_env() {
-    source ./.env
-    APP_NAME=$APP_NAME
-}
-
 start_stack() {
+    cd $DOCKER_APP_FULL_PATH
     env $(cat .env | grep ^[A-Z] | xargs) docker stack deploy -c docker-swarm.yml $APP_NAME
 }
 
-entry_screen
-load_env
+# entry_screen
+
 start_stack

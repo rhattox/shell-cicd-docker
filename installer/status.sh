@@ -4,13 +4,8 @@
 SCRIPT_COLLUMNS=$1
 SCRIPT_MIDDLE_OF_SCREEN=$2
 # all services variables
-CMD=$3
-APP_NAME=$4
+APP_NAME=$3
 
-load_env() {
-    source ./.env
-    APP_NAME=$APP_NAME
-}
 entry_screen() {
     # clear the screen
     tput clear
@@ -49,7 +44,7 @@ stack_screen() {
         fi
     done
 }
-load_env
+
 entry_screen
 nodes_screen
 stack_screen

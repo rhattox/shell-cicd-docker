@@ -4,8 +4,7 @@
 SCRIPT_COLLUMNS=$1
 SCRIPT_MIDDLE_OF_SCREEN=$2
 # all services variables
-CMD=$3
-APP_NAME=$4
+APP_NAME=$3
 
 entry_screen() {
     # clear the screen
@@ -19,15 +18,9 @@ entry_screen() {
     echo -e "############################"
 }
 
-load_env() {
-    source ./.env
-    APP_NAME=$APP_NAME
-}
-
 stop_stack() {
     docker stack rm $APP_NAME
 }
 
 entry_screen
-load_env
 stop_stack

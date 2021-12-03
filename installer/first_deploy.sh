@@ -7,11 +7,10 @@ source $HOME_PATH/shell_cicd_docker.properties
 SCRIPT_COLLUMNS=$1
 SCRIPT_MIDDLE_OF_SCREEN=$2
 # all services variables
-CMD=$3
-APP_NAME=$4
+APP_NAME=$3
 # first deploy variables
-GIT_HTTPS=$5
-GIT_TAG=$6
+GIT_HTTPS=$4
+GIT_TAG=$5
 
 test_dir_app() {
     if [[ -d $DOCKER_STACKS/$APP_NAME-$GIT_TAG ]]; then
@@ -50,6 +49,7 @@ create_env() {
     echo "DOCKER_VOLUMES_LOGS=$DOCKER_VOLUMES_LOGS" >>.env
     echo "DOCKER_STACKS=$DOCKER_STACKS" >>.env
     echo "DOCKER_APPS=$DOCKER_APPS" >>.env
+    echo "DOCKER_APP_FULL_PATH=$DOCKER_APPS/$APP_NAME" >>.env
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
 }
 create_scripts_cicd_docker() {
@@ -60,6 +60,11 @@ create_scripts_cicd_docker() {
     ln -s cicd_docker.sh status.sh
     ln -s cicd_docker.sh logs.sh
     ln -s cicd_docker.sh deploy.sh
+}
+
+update_permissions() {
+    chmod -R 750 $DOCKER_STACKS/$APP_NAME-$GIT_TAG
+    chown -R root:docker $DOCKER_STACKS/$APP_NAME-$GIT_TAG
 }
 
 entry_screen() {
@@ -83,3 +88,4 @@ entry_screen
 test_dir_app
 create_scripts_cicd_docker
 create_link
+update_permissions

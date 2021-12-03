@@ -1,16 +1,22 @@
 #!/bin/bash
 
-# basic variables
-SCRIPT_COLLUMNS=$1
-SCRIPT_MIDDLE_OF_SCREEN=$2
-# all services variables
-CMD=$3
-APP_NAME=$4
-# first deploy variables
-GIT_HTTPS=$5
-GIT_TAG=$6
+ARGS=("$@")
 
-echo "Entrypoint: $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG"
+# basic variables
+SCRIPT_COLLUMNS=${ARGS[0]}
+SCRIPT_MIDDLE_OF_SCREEN=${ARGS[1]}
+# all services variables
+CMD=${ARGS[2]}
+# first deploy variables
+APP_NAME=${ARGS[3]}
+GIT_HTTPS=${ARGS[4]}
+GIT_TAG=${ARGS[5]}
+
+# for i in "${ARGS[@]}"; do
+#     echo "Testando repetição entry $i"
+# done
+
+# echo "Entrypoint: $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG"
 
 export TERM=xterm-256color
 
@@ -53,25 +59,30 @@ select_service() {
 }
 
 do_setup() {
-    /bin/bash /installer/setup.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
+    /bin/bash /installer/setup.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN
 }
 do_first_deploy() {
-    /bin/bash /installer/first_deploy.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
+    /bin/bash /installer/first_deploy.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME $GIT_HTTPS $GIT_TAG
 }
 do_deploy() {
-    /bin/bash /installer/deploy.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
+    source /root/.env
+    /bin/bash /installer/deploy.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME $DOCKER_APP_FULL_PATH
 }
 do_start() {
-    /bin/bash /installer/start.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
+    source /root/.env
+    /installer/start.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME $DOCKER_APP_FULL_PATH
 }
 do_stop() {
-    /bin/bash /installer/stop.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
+    source /root/.env
+    /bin/bash /installer/stop.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME $DOCKER_APP_FULL_PATH
 }
 do_status() {
-    /bin/bash /installer/status.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
+    source /root/.env
+    /bin/bash /installer/status.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME $DOCKER_APP_FULL_PATH
 }
 do_logs() {
-    /bin/bash /installer/logs.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
+    source /root/.env
+    /bin/bash /installer/logs.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME $DOCKER_APP_FULL_PATH
 }
 
 init
