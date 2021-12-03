@@ -1,8 +1,11 @@
 #!/bin/bash
 
-#GLOBAL COLS
-cols=$(tput cols)
-middle_of_screen=$(expr $cols / 3)
+# basic variables
+SCRIPT_COLLUMNS=$1
+SCRIPT_MIDDLE_OF_SCREEN=$2
+# all services variables
+CMD=$3
+APP_NAME=$4
 
 HOME_PATH=/installer
 LOCAL_CONFIG_FILE=$HOME_PATH/shell_cicd_docker.properties
@@ -16,15 +19,15 @@ source $LOCAL_CONFIG_FILE
 
 init() {
     if [ -f $LOCAL_CONFIG_FILE ]; then
-        for ((i = 0; i < cols; i++)); do printf "="; done
+        for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
         echo -e "Local shell_cicd_docker.properties do exists... OK"
-        for ((i = 0; i < cols; i++)); do printf "="; done
+        for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
         check_local_script_folder
-        for ((i = 0; i < cols; i++)); do printf "="; done
+        for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
         check_docker_base_dirs
-        for ((i = 0; i < cols; i++)); do printf "="; done
+        for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
         check_permissions_dirs
-        for ((i = 0; i < cols; i++)); do printf "="; done
+        for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     else
         echo -e "Local shell_cicd_docker.properties do NOT exists!!"
         exit 1

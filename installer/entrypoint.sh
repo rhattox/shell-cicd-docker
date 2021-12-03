@@ -12,6 +12,8 @@ GIT_TAG=$6
 
 echo "Entrypoint: $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG"
 
+export TERM=xterm-256color
+
 init() {
     if [[ -z "$CMD" ]]; then
         echo -e "First variable is NULL, no execution."
@@ -51,25 +53,25 @@ select_service() {
 }
 
 do_setup() {
-    /bin/bash /installer/setup.sh
+    /bin/bash /installer/setup.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
 }
 do_first_deploy() {
-    /bin/bash /installer/first_deploy.sh $GIT_HTTPS $APP_NAME $GIT_TAG
+    /bin/bash /installer/first_deploy.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
 }
 do_deploy() {
-    /bin/bash /installer/deploy.sh $APP_NAME
+    /bin/bash /installer/deploy.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
 }
 do_start() {
-    /bin/bash /installer/start.sh $APP_NAME
+    /bin/bash /installer/start.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
 }
 do_stop() {
-    /bin/bash /installer/stop.sh $APP_NAME
+    /bin/bash /installer/stop.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
 }
 do_status() {
-    /bin/bash /installer/status.sh $APP_NAME
+    /bin/bash /installer/status.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
 }
 do_logs() {
-    /bin/bash /installer/logs.sh $APP_NAME
+    /bin/bash /installer/logs.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG
 }
 
 init

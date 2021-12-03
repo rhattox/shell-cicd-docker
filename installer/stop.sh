@@ -1,14 +1,21 @@
 #!/bin/bash
 
+# basic variables
+SCRIPT_COLLUMNS=$1
+SCRIPT_MIDDLE_OF_SCREEN=$2
+# all services variables
+CMD=$3
+APP_NAME=$4
+
 entry_screen() {
     # clear the screen
     tput clear
     # Move cursor to screen location X,Y (top left is 0,0)
-    tput cup 3 $middle_of_screen
+    tput cup 3 $SCRIPT_MIDDLE_OF_SCREEN
     echo -e "############################"
-    tput cup 4 $middle_of_screen
+    tput cup 4 $SCRIPT_MIDDLE_OF_SCREEN
     echo -e "######  STOP SCRIPT    #####"
-    tput cup 5 $middle_of_screen
+    tput cup 5 $SCRIPT_MIDDLE_OF_SCREEN
     echo -e "############################"
 }
 
