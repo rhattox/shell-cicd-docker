@@ -22,7 +22,7 @@ entry_screen() {
 nodes_screen() {
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo
-    docker node ls -f "role=worker"
+    docker node ls
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo
 }
@@ -33,16 +33,22 @@ stack_screen() {
     echo -e "\tStack Name ---> $APP_NAME"
     # Set a foreground colour using ANSI escape
     tput sgr0
-    docker node ls -f "role=worker" --format "{{.Hostname}}" | while read entry_node; do
-        output=$(DOCKER_HOST=${entry_node} docker ps -a --no-trunc -f name=$APP_NAME | wc -l)
-        if [ $output != 1 ]; then
+    docker node ls --format "{{.Hostname}}" | while read ENTRY_NODE; do
+
+        for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "+"; done
+        echo "Node Name: ${ENTRY_NODE}"
+        for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "+"; done
+
+        OUTPUT_LINES=$(DOCKER_HOST=${ENTRY_NODE} docker ps -a --no-trunc -f name=$APP_NAME | wc -l)
+
+        if [[ $OUTPUT_LINES != 1 ]]; then
             for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "+"; done
-            echo "Node Name: ${entry_node}"
-            #for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "+"; done
-            DOCKER_HOST=${entry_node} docker ps -a --format "$(tput setaf 4)\nID:\t{{.ID}}\nImage:\t{{.Image}}\nName:\t{{.Names}}\nState:\t{{.State}}\nPorts:\t{{.Ports}}\nMount:\t{{.Mounts}}\nRunning:\t{{.RunningFor}}$(tput sgr0)" --no-trunc -f name=$APP_NAME
+            DOCKER_HOST=${ENTRY_NODE} docker ps -a --format "$(tput setaf 4)\nID:\t{{.ID}}\nImage:\t{{.Image}}\nName:\t{{.Names}}\nState:\t{{.State}}\nPorts:\t{{.Ports}}\nMount:\t{{.Mounts}}\nRunning:\t{{.RunningFor}}$(tput sgr0)" --no-trunc -f name=$APP_NAME
             for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "+"; done
         fi
+
     done
+
 }
 
 entry_screen
