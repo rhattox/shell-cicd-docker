@@ -50,6 +50,9 @@ select_service() {
     logs.sh)
         do_logs
         ;;
+    help.sh)
+        do_help
+        ;;
     *)
         echo -e "Service unknown"
         exit 1
@@ -83,6 +86,9 @@ do_status() {
 do_logs() {
     source /root/.env
     /bin/bash /installer/logs.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME $DOCKER_APP_FULL_PATH
+}
+do_help() {
+    /bin/bash /installer/help.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN
 }
 
 init
