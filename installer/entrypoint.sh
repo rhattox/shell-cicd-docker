@@ -4,19 +4,12 @@ ARGS=("$@")
 
 # basic variables
 SCRIPT_COLLUMNS=${ARGS[0]}
-SCRIPT_MIDDLE_OF_SCREEN=${ARGS[1]}
 # all services variables
-CMD=${ARGS[2]}
+CMD=${ARGS[1]}
 # first deploy variables
-APP_NAME=${ARGS[3]}
-GIT_HTTPS=${ARGS[4]}
-GIT_TAG=${ARGS[5]}
-
-# for i in "${ARGS[@]}"; do
-#     echo "Testando repetição entry $i"
-# done
-
-# echo "Entrypoint: $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $CMD $APP_NAME $GIT_HTTPS $GIT_TAG"
+APP_NAME=${ARGS[2]}
+GIT_HTTPS=${ARGS[3]}
+GIT_TAG=${ARGS[4]}
 
 export TERM=xterm-256color
 
@@ -62,33 +55,33 @@ select_service() {
 }
 
 do_setup() {
-    /bin/bash /installer/setup.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN
+    /bin/bash /installer/setup.sh $SCRIPT_COLLUMNS
 }
 do_first_deploy() {
-    /bin/bash /installer/first_deploy.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME $GIT_HTTPS $GIT_TAG
+    /bin/bash /installer/first_deploy.sh $SCRIPT_COLLUMNS $APP_NAME $GIT_HTTPS $GIT_TAG
 }
 do_deploy() {
     source /root/.env
-    /bin/bash /installer/deploy.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME $DOCKER_APP_FULL_PATH
+    /bin/bash /installer/deploy.sh $SCRIPT_COLLUMNS $APP_NAME $DOCKER_APP_FULL_PATH
 }
 do_start() {
     source /root/.env
-    /installer/start.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME $DOCKER_APP_FULL_PATH
+    /installer/start.sh $SCRIPT_COLLUMNS $APP_NAME $DOCKER_APP_FULL_PATH
 }
 do_stop() {
     source /root/.env
-    /bin/bash /installer/stop.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME $DOCKER_APP_FULL_PATH
+    /bin/bash /installer/stop.sh $SCRIPT_COLLUMNS $APP_NAME $DOCKER_APP_FULL_PATH
 }
 do_status() {
     source /root/.env
-    /bin/bash /installer/status.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME $DOCKER_APP_FULL_PATH
+    /bin/bash /installer/status.sh $SCRIPT_COLLUMNS $APP_NAME $DOCKER_APP_FULL_PATH
 }
 do_logs() {
     source /root/.env
-    /bin/bash /installer/logs.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME $DOCKER_APP_FULL_PATH
+    /bin/bash /installer/logs.sh $SCRIPT_COLLUMNS $APP_NAME $DOCKER_APP_FULL_PATH
 }
 do_help() {
-    /bin/bash /installer/help.sh $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN
+    /bin/bash /installer/help.sh $SCRIPT_COLLUMNS
 }
 
 init

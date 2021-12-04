@@ -1,9 +1,8 @@
 #!/bin/bash
 # basic variables
 SCRIPT_COLLUMNS=$1
-SCRIPT_MIDDLE_OF_SCREEN=$2
 # all services variables
-APP_NAME=$3
+APP_NAME=$2
 
 entry_screen() {
     echo -e "############################"
@@ -26,9 +25,11 @@ stack_screen() {
             echo "LOGS:"
             docker -H $ENTRY_NODE logs $CONTAINER_ID
             for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+            echo
         done
     done
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+    echo
 }
 
 entry_screen

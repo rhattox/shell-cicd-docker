@@ -2,8 +2,29 @@
 
 # basic variables
 SCRIPT_COLLUMNS=$1
-SCRIPT_MIDDLE_OF_SCREEN=$2
 # all services variables
-APP_NAME=$3
+APP_NAME=$2
 
-echo "Deploy: $SCRIPT_COLLUMNS $SCRIPT_MIDDLE_OF_SCREEN $APP_NAME"
+source /installer/shell_cicd_docker.properties
+
+cd $DOCKER_APPS/$APP_NAME
+
+if [[ -f "./.env.backup" ]]; then
+    echo "Backup env file founded! Adding to .env (~final~)"
+    cat .env.backup >>.env
+else
+    echo "Backup not founded, skiping this step (there was no .env in git clone!)"
+fi
+
+if [[ -f "./.env.secrets" ]]; then
+    echo "Secrets env file founded!"
+else
+    echo "Secrets not founded, skiping this step"
+fi
+
+if [[ -f "./.env.defaults" ]]; then
+    echo "Defaults env file founded!"
+else
+    echo "Defaults not founded, skiping this step"
+    #rename .env.backup to .env.defaults
+fi

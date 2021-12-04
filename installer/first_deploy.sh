@@ -5,12 +5,11 @@ source $HOME_PATH/shell_cicd_docker.properties
 
 # basic variables
 SCRIPT_COLLUMNS=$1
-SCRIPT_MIDDLE_OF_SCREEN=$2
 # all services variables
-APP_NAME=$3
+APP_NAME=$2
 # first deploy variables
-GIT_HTTPS=$4
-GIT_TAG=$5
+GIT_HTTPS=$3
+GIT_TAG=$4
 
 test_dir_app() {
     if [[ -d $DOCKER_STACKS/$APP_NAME-$GIT_TAG ]]; then
@@ -38,21 +37,37 @@ copy_git_source() {
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\n"
     #git clone --branch 0.0.1-SNAPSHOT001   --single-branch --depth 1 https://github.com/bcovies/php_recybem_bndes.git ./php_recybem_bndes-0.0.1-SNAPSHOT001/
-    git clone --branch $GIT_TAG --single-branch --depth 1 $GIT_HTTPS $DOCKER_STACKS/$APP_NAME-$GIT_TAG &>/dev/null
-    echo -e "Downloaded git repo sucessfully at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
+    echo "Downloading from: $GIT_HTTPS"
+    git clone --branch $GIT_TAG --single-branch --depth 1 $GIT_HTTPS $DOCKER_STACKS/$APP_NAME-$GIT_TAG
+    echo "Downloaded git repo sucessfully at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
     echo -e "\n"
-
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     create_env
 
 }
 
 create_env() {
+    cd $DOCKER_STACKS/$APP_NAME-$GIT_TAG
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\n"
     echo -e "Creating .env file at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
-    cd $DOCKER_STACKS/$APP_NAME-$GIT_TAG
-    touch .env
+    if [[ -f ".env" ]]; then
+        echo "OPS! File .env already exists changing to .env.backup..."
+        echo "be carefull with secrets! READ ./help.sh"
+        mv .env .env.backup
+    fi
+    if [[ -f ".gitignore" ]]; then
+        echo ".gitignore exists!! Checking if is OK..."
+        GREP_FILES=('cicd_docker.sh' 'deploy.sh' 'help.sh' 'logs.sh' 'start.sh' 'status.sh' 'stop.sh' '.env' '.env.secrets')
+        for VAR in "${GREP_FILES[@]}"; do
+            TEST_GITIGNORE=$(grep -iwR "$VAR" .gitignore)
+            if [[ -z $TEST_GITIGNORE ]]; then
+                echo "Adicionado: $VAR no .gitignore"
+                echo "$VAR" >>.gitignore
+            fi
+        done
+    fi
+
     echo "APP_NAME=$APP_NAME" >>.env
     echo "DOCKER_VOLUMES_DATA=$DOCKER_VOLUMES_DATA" >>.env
     echo "DOCKER_VOLUMES_CONFIGS=$DOCKER_VOLUMES_CONFIGS" >>.env
@@ -71,6 +86,7 @@ create_scripts_cicd_docker() {
     ln -s cicd_docker.sh status.sh
     ln -s cicd_docker.sh logs.sh
     ln -s cicd_docker.sh deploy.sh
+    ln -s cicd_docker.sh help.sh
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\n"
     echo "Created links!"
