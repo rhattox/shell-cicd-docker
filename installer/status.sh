@@ -7,17 +7,9 @@ SCRIPT_MIDDLE_OF_SCREEN=$2
 APP_NAME=$3
 
 entry_screen() {
-    # clear the screen
-    tput clear
-    # Move cursor to screen location X,Y (top left is 0,0)
-    tput cup 3 $SCRIPT_MIDDLE_OF_SCREEN
     echo -e "############################"
-    tput cup 4 $SCRIPT_MIDDLE_OF_SCREEN
     echo -e "######  SCRIPT STATUS  #####"
-    tput cup 5 $SCRIPT_MIDDLE_OF_SCREEN
     echo -e "############################"
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
-
 }
 nodes_screen() {
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
@@ -27,12 +19,7 @@ nodes_screen() {
     echo
 }
 stack_screen() {
-    # Move cursor to screen location X,Y (top left is 0,0)
-    tput cup 13 $SCRIPT_MIDDLE_OF_SCREEN
-    tput setaf 3
     echo -e "\tStack Name ---> $APP_NAME"
-    # Set a foreground colour using ANSI escape
-    tput sgr0
     docker node ls --format "{{.Hostname}}" | while read ENTRY_NODE; do
         for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "+"; done
         echo "Node Name: ${ENTRY_NODE}"

@@ -15,12 +15,18 @@ GIT_TAG=$5
 test_dir_app() {
     if [[ -d $DOCKER_STACKS/$APP_NAME-$GIT_TAG ]]; then
         for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+        echo -e "\n"
         echo -e "Application already exits at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
+        echo -e "\n"
+
         for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
         exit 1
     else
         for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+        echo -e "\n"
         echo -e "Application do not exists, creating home directory at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
+        echo -e "\n"
+
         mkdir -p $DOCKER_STACKS/$APP_NAME-$GIT_TAG
         for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
         copy_git_source
@@ -30,9 +36,12 @@ test_dir_app() {
 
 copy_git_source() {
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+    echo -e "\n"
     #git clone --branch 0.0.1-SNAPSHOT001   --single-branch --depth 1 https://github.com/bcovies/php_recybem_bndes.git ./php_recybem_bndes-0.0.1-SNAPSHOT001/
     git clone --branch $GIT_TAG --single-branch --depth 1 $GIT_HTTPS $DOCKER_STACKS/$APP_NAME-$GIT_TAG &>/dev/null
     echo -e "Downloaded git repo sucessfully at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
+    echo -e "\n"
+
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     create_env
 
@@ -40,6 +49,7 @@ copy_git_source() {
 
 create_env() {
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+    echo -e "\n"
     echo -e "Creating .env file at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
     cd $DOCKER_STACKS/$APP_NAME-$GIT_TAG
     touch .env
@@ -50,6 +60,7 @@ create_env() {
     echo "DOCKER_STACKS=$DOCKER_STACKS" >>.env
     echo "DOCKER_APPS=$DOCKER_APPS" >>.env
     echo "DOCKER_APP_FULL_PATH=$DOCKER_APPS/$APP_NAME" >>.env
+    echo -e "\n"
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
 }
 create_scripts_cicd_docker() {
@@ -60,6 +71,12 @@ create_scripts_cicd_docker() {
     ln -s cicd_docker.sh status.sh
     ln -s cicd_docker.sh logs.sh
     ln -s cicd_docker.sh deploy.sh
+    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+    echo -e "\n"
+    echo "Created links!"
+    echo -e "\n"
+    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+
 }
 
 update_permissions() {
@@ -68,20 +85,20 @@ update_permissions() {
 }
 
 entry_screen() {
-    # clear the screen
-    tput clear
-    # Move cursor to screen location X,Y (top left is 0,0)
-    tput cup 3 $SCRIPT_MIDDLE_OF_SCREEN
     echo -e "###################################"
-    tput cup 4 $SCRIPT_MIDDLE_OF_SCREEN
     echo -e "######  FIRST DEPLOY SCRIPT  #####"
-    tput cup 5 $SCRIPT_MIDDLE_OF_SCREEN
     echo -e "##################################"
 }
 
 create_link() {
     cd $DOCKER_APPS
     ln -s $DOCKER_STACKS/$APP_NAME-$GIT_TAG $APP_NAME
+    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+    echo -e "\n"
+    echo -e "Created link at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
+    echo -e "\n"
+    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+
 }
 
 entry_screen
