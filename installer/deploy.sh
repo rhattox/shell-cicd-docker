@@ -11,7 +11,8 @@ cd $DOCKER_APPS/$APP_NAME
 
 if [[ -f "./.env.backup" ]]; then
     echo "Backup env file founded! Adding to .env (~final~)"
-    cat .env.backup >>.env
+    fgrep -vxf .env .env.backup >>.env
+    rm -f .env.backup
 else
     echo "Backup not founded, skiping this step (there was no .env in git clone!)"
 fi
