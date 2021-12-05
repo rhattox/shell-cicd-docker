@@ -15,19 +15,34 @@ nodes_screen() {
     echo
     docker node ls
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+    echo -e "\tStack Name ---> $APP_NAME"
+    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+
     echo
 }
+
 stack_screen() {
-    echo -e "\tStack Name ---> $APP_NAME"
-    docker node ls --format "{{.Hostname}}" | while read ENTRY_NODE; do
-        echo "Node Name: ${ENTRY_NODE}"
-        OUTPUT_LINES=$(DOCKER_HOST=${ENTRY_NODE} docker ps -a --no-trunc -f name=$APP_NAME | wc -l)
-        if [[ $OUTPUT_LINES != 1 ]]; then
-            for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
-            DOCKER_HOST=${ENTRY_NODE} docker ps -a --format "$(tput setaf 4)\nImage:\t{{.Image}}\nID:\t{{.ID}}\nName:\t{{.Names}}\nStatus:\t{{.Status}}\nPorts:\t{{.Ports}}\nState:\t{{.State}}\nNetworks:\t{{.Networks}}\nMounts:\t{{.Mounts}}\nLabels:\t{{.Labels}}\nSize:\t{{.Size}}\nRunningFor:\t{{.RunningFor}}\nCreatedAt:\t{{.CreatedAt}}\nCommand:\t{{.Command}}\nMount:\t{{.Mounts}}\nRunning:\t{{.RunningFor}}$(tput sgr0)" --no-trunc -f name=$APP_NAME
-            for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
-        fi
+
+    arr_nodes=($(docker node ls --format "{{.Hostname}}"))
+    arr_ready=($(docker node ls --format "{{.Status}}"))
+    number_nodes=${#arr_nodes[@]}
+
+    for ((i = 0; i < $number_nodes; i++)); do
+        for x in "${arr_ready[$i]}"; do
+            if [[ ! "$x" == "Down" ]]; then
+                for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "-"; done
+                echo -e "Node: ${arr_nodes[$i]}"
+                for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "-"; done
+                OUTPUT_LINES=$(DOCKER_HOST=${arr_nodes[$i]} docker ps -a --no-trunc -f name=$APP_NAME | wc -l)
+                if [[ $OUTPUT_LINES != 1 ]]; then
+                    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+                    DOCKER_HOST=${arr_nodes[$i]} docker ps --format "$(tput setaf 2)\nImage:\t{{.Image}}\nID:\t{{.ID}}\nName:\t{{.Names}}\nStatus:\t{{.Status}}\nPorts:\t{{.Ports}}\nState:\t{{.State}}\nNetworks:\t{{.Networks}}\nMounts:\t{{.Mounts}}\nLabels:\t{{.Labels}}\nSize:\t{{.Size}}\nRunningFor:\t{{.RunningFor}}\nCreatedAt:\t{{.CreatedAt}}\nCommand:\t{{.Command}}\nMount:\t{{.Mounts}}\nRunning:\t{{.RunningFor}}\n\n$(tput sgr0)" --no-trunc -f name=$APP_NAME
+                    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+                fi
+            fi
+        done
     done
+
 }
 
 entry_screen
