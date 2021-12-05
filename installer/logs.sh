@@ -24,22 +24,23 @@ stack_screen() {
 
     number_nodes=${#arr_nodes[@]}
 
-    for ((i = 0; i < $number_nodes; i++)); do
-        for x in "${arr_ready[$i]}"; do
-
+    for ((i_for_nodes = 0; i_for_nodes < $number_nodes; i_for_nodes++)); do
+        for x in "${arr_ready[$i_for_nodes]}"; do
             if [[ ! "$x" == "Down" ]]; then
-                echo -e "Node: ${arr_nodes[$i]}"
+                tput setaf 2
+                for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "-"; done
+                echo -e "Node: ${arr_nodes[$i_for_nodes]}"
+                for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "-"; done
+                tput sgr0
+                docker -H ${arr_nodes[$i_for_nodes]} ps -q --format "{{.ID}}" --no-trunc -f name=$APP_NAME | while read CONTAINER_ID; do
 
-                docker -H ${arr_nodes[$i]} ps -q | while read CONTAINER_ID; do
                     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
-
-                    echo "Container ID: $CONTAINER_ID"
-
-                    echo "LOGS:"
-                    TESTE_COMANDO=$(docker -H ${arr_nodes[$i]} logs $CONTAINER_ID)
-
-                    echo "$TESTE_COMANDO"
-
+                    tput setaf 3
+                    echo -e "\nContainer ID: $CONTAINER_ID"
+                    tput sgr0
+                    echo -e "LOGS OUTPUT:"
+                    docker -H ${arr_nodes[$i_for_nodes]} logs $CONTAINER_ID
+                    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
                     # sleep 2
                 done
             fi
