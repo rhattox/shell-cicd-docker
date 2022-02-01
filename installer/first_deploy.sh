@@ -27,6 +27,10 @@ test_dir_app() {
         echo -e "\n"
 
         mkdir -p $DOCKER_STACKS/$APP_NAME-$GIT_TAG
+        #
+        # FIXME -- create in setup.sh script folder verification and folder creation
+        # 
+        mkdir -p $DOCKER_APPS
         for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
         copy_git_source
         for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
