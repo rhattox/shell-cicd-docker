@@ -35,17 +35,10 @@ get_collumns() {
 
 #   Faz verificação do ponto de entrada e cria o container dependendo da entrada.
 start_script() {
-    if [[ "$CMD" == "first_deploy.sh" || "$CMD" == "setup.sh" || "$CMD" == "help.sh" ]]; then
-        echo "Aqui $CMD"
-        docker run --rm --network="host" -v /opt/docker:/opt/docker -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG} /bin/bash /scripts/redirect.sh $SCRIPT_COLLUMNS $CMD "${ARGS[@]}"
+    if [[ -f ./.env ]]; then
+        docker run --rm --network="host" -v /opt/docker:/opt/docker -v $(pwd)/.env:/root/.env -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG} /bin/bash /scripts/redirect.sh $SCRIPT_COLLUMNS $CMD "${ARGS[@]}"
     else
-        if [[ -f ./.env ]]; then
-            docker run --rm --network="host" -v /opt/docker:/opt/docker -v $(pwd)/.env:/root/.env -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG} /bin/bash /scripts/redirect.sh $SCRIPT_COLLUMNS $CMD
-        else
-            echo ".env not founded can't execute $CMD script, try to first_deploy.sh an application!!"
-            echo "Or you may create a template as shell_cicd_docker.properties with APP_Name"
-            exit 1
-        fi
+        docker run --rm --network="host" -v /opt/docker:/opt/docker -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG} /bin/bash /scripts/redirect.sh $SCRIPT_COLLUMNS $CMD "${ARGS[@]}"
     fi
 }
 init(){
