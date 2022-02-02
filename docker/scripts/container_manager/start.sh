@@ -30,8 +30,9 @@ entry_screen() {
 
 start_stack() {
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
-    echo
+    echo $(pwd)
     cd $DOCKER_APP_FULL_PATH
+    echo $(pwd)
     env $(cat .env | grep ^[A-Z] | xargs) docker stack deploy -c docker-swarm.yml $APP_NAME
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo

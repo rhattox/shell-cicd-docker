@@ -104,6 +104,8 @@ do_deploy() {
 }
 do_start() {
     source /root/.env
+    ls -la /root/
+    cat /root/.env
     /bin/bash ${PATH_CONTAINER_MANAGER}/start.sh ${SCRIPT_COLLUMNS} ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 do_stop() {

@@ -101,7 +101,7 @@ create_env() {
 }
 create_scripts_cicd_docker() {
     cd $DOCKER_STACKS/$APP_NAME-$GIT_TAG
-    cp $HOME_PATH/entrypoint.sh .
+    cp $PATH_SCRIPTS/entrypoint.sh .
     ln -s entrypoint.sh start.sh
     ln -s entrypoint.sh stop.sh
     ln -s entrypoint.sh status.sh

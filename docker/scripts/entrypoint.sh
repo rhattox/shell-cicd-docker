@@ -57,7 +57,7 @@ start_script() {
     if [[ -f ./.env ]]; then
         docker run --rm --network="host" -v /opt/docker:/opt/docker -v $(pwd)/.env:/root/.env -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG} /bin/bash ${PATH_SCRIPTS}/redirect.sh ${SCRIPT_COLLUMNS} ${CMD} "${ARGS[@]}"
     else
-        docker run --rm --network="host" -v /opt/docker:/opt/docker -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG} /bin/bash ${PATH_SCRIPTS}/redirect.sh ${SCRIPT_COLLUMNS{} ${CMD} "${ARGS[@]}"
+        docker run --rm --network="host" -v /opt/docker:/opt/docker -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG} /bin/bash ${PATH_SCRIPTS}/redirect.sh ${SCRIPT_COLLUMNS} ${CMD} "${ARGS[@]}"
     fi
 }
 init(){
