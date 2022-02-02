@@ -1,11 +1,31 @@
 #!/bin/bash
 
+#   Caminho dos scripts SEPARADO POR UTILIZAÇÃO, cuidado!
+#
+#   SCRIPTS             -->     entrypoint | help | redirect | setup
+#
+PATH_SCRIPTS=/scripts
+#
+#   CONTAINER_MANAGER   -->     logs | start | status | stop
+#
+PATH_CONTAINER_MANAGER=${PATH_SCRIPTS}/container_manager
+#
+#   STACK_MANAGER       -->     deploy | first_deploy
+#
+PATH_STACK_MANAGER=${PATH_SCRIPTS}/stack_manager
+#
+#   CONFIGS
+#
+PATH_CONFIGS=/configs
+
+source $PATH_CONFIGS/shell_cicd_docker.properties
+
+
 # basic variables
 SCRIPT_COLLUMNS=$1
 # all services variables
 APP_NAME=$2
 
-source /installer/shell_cicd_docker.properties
 
 cd $DOCKER_APPS/$APP_NAME
 

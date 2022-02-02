@@ -1,7 +1,24 @@
 #!/bin/bash
 
-HOME_PATH=/installer
-source $HOME_PATH/shell_cicd_docker.properties
+#   Caminho dos scripts SEPARADO POR UTILIZAÇÃO, cuidado!
+#
+#   SCRIPTS             -->     entrypoint | help | redirect | setup
+#
+PATH_SCRIPTS=/scripts
+#
+#   CONTAINER_MANAGER   -->     logs | start | status | stop
+#
+PATH_CONTAINER_MANAGER=${PATH_SCRIPTS}/container_manager
+#
+#   STACK_MANAGER       -->     deploy | first_deploy
+#
+PATH_STACK_MANAGER=${PATH_SCRIPTS}/stack_manager
+#
+#   CONFIGS
+#
+PATH_CONFIGS=/configs
+
+source $PATH_CONFIGS/shell_cicd_docker.properties
 
 # basic variables
 SCRIPT_COLLUMNS=$1
@@ -84,13 +101,13 @@ create_env() {
 }
 create_scripts_cicd_docker() {
     cd $DOCKER_STACKS/$APP_NAME-$GIT_TAG
-    cp $HOME_PATH/cicd_docker.sh .
-    ln -s cicd_docker.sh start.sh
-    ln -s cicd_docker.sh stop.sh
-    ln -s cicd_docker.sh status.sh
-    ln -s cicd_docker.sh logs.sh
-    ln -s cicd_docker.sh deploy.sh
-    ln -s cicd_docker.sh help.sh
+    cp $HOME_PATH/entrypoint.sh .
+    ln -s entrypoint.sh start.sh
+    ln -s entrypoint.sh stop.sh
+    ln -s entrypoint.sh status.sh
+    ln -s entrypoint.sh logs.sh
+    ln -s entrypoint.sh deploy.sh
+    ln -s entrypoint.sh help.sh
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\n"
     echo "Created links!"

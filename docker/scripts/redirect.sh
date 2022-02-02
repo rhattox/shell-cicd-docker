@@ -16,6 +16,25 @@
 #
 #   Licença: GPL.
 
+
+#   Caminho dos scripts SEPARADO POR UTILIZAÇÃO, cuidado!
+#
+#   SCRIPTS             -->     entrypoint | help | redirect | setup
+#
+PATH_SCRIPTS=/scripts
+#
+#   CONTAINER_MANAGER   -->     logs | start | status | stop
+#
+PATH_CONTAINER_MANAGER=${PATH_SCRIPTS}/container_manager
+#
+#   STACK_MANAGER       -->     deploy | first_deploy
+#
+PATH_STACK_MANAGER=${PATH_SCRIPTS}/stack_manager
+#
+#   CONFIGS
+#
+PATH_CONFIGS=/configs
+
 ARGS=("$@")
 
 # Parâmetro de número de colunas
@@ -28,16 +47,6 @@ GIT_HTTPS=${ARGS[3]}
 GIT_TAG=${ARGS[4]}
 
 export TERM=xterm-256color
-
-#   Caminho dos scripts SEPARADO POR UTILIZAÇÃO, cuidado!
-#
-#   OUTROS              -->     entrypoint | help | redirect | setup
-PATH_SCRIPTS=/scripts
-#   CONTAINER_MANAGER   -->     logs | start | status | stop
-PATH_CONTAINER_MANAGER=${PATH_SCRIPTS}/container_manager
-#
-#   STACK_MANAGER       -->     deploy | first_deploy
-PATH_STACK_MANAGER=${PATH_SCRIPTS}/stack_manager
 
 init() {
     if [[ -z "$CMD" ]]; then
