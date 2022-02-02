@@ -10,6 +10,8 @@ RUN apk add bash &&\
 
 RUN addgroup docker -g 998 
 
-COPY --chown=root:root ./installer /installer
+COPY --chown=root:root ./scripts /scripts
 
-RUN chmod 700 -R /installer
+COPY --chown=root:root ./configs /configs
+
+RUN chmod 700 -R /scripts

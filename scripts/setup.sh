@@ -1,1 +1,0 @@
-/home/dev/git/shell_cicd_docker/installer/cicd_docker.sh
