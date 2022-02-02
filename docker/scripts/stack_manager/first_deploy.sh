@@ -79,7 +79,7 @@ create_env() {
     fi
     if [[ -f ".gitignore" ]]; then
         echo ".gitignore exists!! Checking if is OK..."
-        GREP_FILES=('cicd_docker.sh' 'deploy.sh' 'help.sh' 'logs.sh' 'start.sh' 'status.sh' 'stop.sh' '.env' '.env.secrets')
+        GREP_FILES=('entrypoint.sh' 'deploy.sh' 'help.sh' 'logs.sh' 'start.sh' 'status.sh' 'stop.sh' '.env' '.env.secrets')
         for VAR in "${GREP_FILES[@]}"; do
             TEST_GITIGNORE=$(grep -iwR "$VAR" .gitignore)
             if [[ -z $TEST_GITIGNORE ]]; then
@@ -101,6 +101,9 @@ create_env() {
 }
 create_scripts_cicd_docker() {
     cd $DOCKER_STACKS/$APP_NAME-$GIT_TAG
+    mkdir cicdocker
+    cp .env ./cicdocker
+    cd cicdocker
     cp $PATH_SCRIPTS/entrypoint.sh .
     ln -s entrypoint.sh start.sh
     ln -s entrypoint.sh stop.sh
@@ -113,7 +116,6 @@ create_scripts_cicd_docker() {
     echo "Created links!"
     echo -e "\n"
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
-
 }
 
 update_permissions() {
