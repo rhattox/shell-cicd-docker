@@ -1,17 +1,43 @@
 #!/bin/bash
+#
+# redirect.sh - Responsável por ser o redirecionador de scripts.
+#
+# Autor: Bruno Souto <bcovies@gmail.com>
+#
+# -----------------------------------------------------------------------------------------------------------
+#       Este programa recebe do ponto de entrada e redireciona para o script desejado.
+# -----------------------------------------------------------------------------------------------------------
+#
+#   Histórico:
+#
+#   v0.0.1 - 2021-12-05
+#       - criado script básico.
+#
+#
+#   Licença: GPL.
 
 ARGS=("$@")
 
-# basic variables
+# Parâmetro de número de colunas
 SCRIPT_COLLUMNS=${ARGS[0]}
-# all services variables
+# Parâmetro de seleção do script
 CMD=${ARGS[1]}
-# first deploy variables
+# Se tiver, recebe parametros do FIRST DEPLOY!
 APP_NAME=${ARGS[2]}
 GIT_HTTPS=${ARGS[3]}
 GIT_TAG=${ARGS[4]}
 
 export TERM=xterm-256color
+
+#   Caminho dos scripts SEPARADO POR UTILIZAÇÃO, cuidado!
+#
+#   OUTROS              -->     entrypoint | help | redirect | setup
+PATH_SCRIPTS=/scripts
+#   CONTAINER_MANAGER   -->     logs | start | status | stop
+PATH_CONTAINER_MANAGER=${PATH_SCRIPTS}/container_manager
+#
+#   STACK_MANAGER       -->     deploy | first_deploy
+PATH_STACK_MANAGER=${PATH_SCRIPTS}/stack_manager
 
 init() {
     if [[ -z "$CMD" ]]; then
@@ -21,7 +47,7 @@ init() {
 }
 
 select_service() {
-    case $CMD in
+    case ${CMD} in
     setup.sh)
         do_setup
         ;;
@@ -54,34 +80,34 @@ select_service() {
 
 }
 
+do_help() {
+    /bin/bash ${PATH_SCRIPTS}/help.sh ${SCRIPT_COLLUMNS}
+}
 do_setup() {
-    /bin/bash /installer/setup.sh $SCRIPT_COLLUMNS
+    /bin/bash ${PATH_SCRIPTS}/setup.sh ${SCRIPT_COLLUMNS}
 }
 do_first_deploy() {
-    /bin/bash /installer/first_deploy.sh $SCRIPT_COLLUMNS $APP_NAME $GIT_HTTPS $GIT_TAG
+    /bin/bash ${PATH_STACK_MANAGER}/first_deploy.sh ${SCRIPT_COLLUMNS} ${APP_NAME} ${GIT_HTTPS} ${GIT_TAG}
 }
 do_deploy() {
     source /root/.env
-    /bin/bash /installer/deploy.sh $SCRIPT_COLLUMNS $APP_NAME $DOCKER_APP_FULL_PATH
+    /bin/bash ${PATH_STACK_MANAGER}/deploy.sh ${SCRIPT_COLLUMNS} ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 do_start() {
     source /root/.env
-    /installer/start.sh $SCRIPT_COLLUMNS $APP_NAME $DOCKER_APP_FULL_PATH
+    /bin/bash ${PATH_CONTAINER_MANAGER}/start.sh ${SCRIPT_COLLUMNS} ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 do_stop() {
     source /root/.env
-    /bin/bash /installer/stop.sh $SCRIPT_COLLUMNS $APP_NAME $DOCKER_APP_FULL_PATH
+    /bin/bash ${PATH_CONTAINER_MANAGER}/stop.sh ${SCRIPT_COLLUMNS} ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 do_status() {
     source /root/.env
-    /bin/bash /installer/status.sh $SCRIPT_COLLUMNS $APP_NAME $DOCKER_APP_FULL_PATH
+    /bin/bash ${PATH_CONTAINER_MANAGER}/status.sh ${SCRIPT_COLLUMNS} ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 do_logs() {
     source /root/.env
-    /bin/bash /installer/logs.sh $SCRIPT_COLLUMNS $APP_NAME $DOCKER_APP_FULL_PATH
-}
-do_help() {
-    /bin/bash /installer/help.sh $SCRIPT_COLLUMNS
+    /bin/bash ${PATH_CONTAINER_MANAGER}/logs.sh ${SCRIPT_COLLUMNS} ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 
 init

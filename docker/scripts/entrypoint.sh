@@ -15,7 +15,7 @@
 #
 #
 #   Licença: GPL.
-
+# -----------------------------------------------------------------------------------------------------------
 
 #   Identifica o número de colunas do terminal
 SCRIPT_COLLUMNS=$(tput cols)
@@ -27,13 +27,6 @@ CMD=$(basename "$0")
 #   Argumentos extras que recebem parâmetros
 ARGS=("$@")
 
-check_empty_variable() {
-    if [[ -z "${CMD}" ]]; then
-        echo "Empty variable"
-        CMD="help.sh"
-    fi
-}
-
 get_collumns() {
     if [[ -z "${SCRIPT_COLLUMNS}" ]]; then
         cols=50
@@ -42,21 +35,20 @@ get_collumns() {
 
 #   Faz verificação do ponto de entrada e cria o container dependendo da entrada.
 start_script() {
-    if [[ "${CMD}" == "first_deploy.sh" || "${CMD}" == "setup.sh" || "${CMD}" == "help.sh" ]]; then
-        docker run --rm --network="host" -v /opt/docker:/opt/docker -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG} /bin/bash ${PATH_SCRIPTS}/redirect.sh ${SCRIPT_COLLUMNS} ${CMD} "${ARGS[@]}"
+    if [[ "$CMD" == "first_deploy.sh" || "$CMD" == "setup.sh" || "$CMD" == "help.sh" ]]; then
+        echo "Aqui $CMD"
+        docker run --rm --network="host" -v /opt/docker:/opt/docker -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG} /bin/bash /scripts/redirect.sh $SCRIPT_COLLUMNS $CMD "${ARGS[@]}"
     else
         if [[ -f ./.env ]]; then
-            docker run --rm --network="host" -v /opt/docker:/opt/docker -v $(pwd)/.env:/root/.env -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG} /bin/bash ${PATH_SCRIPTS}/redirect.sh ${SCRIPT_COLLUMNS} ${CMD}
+            docker run --rm --network="host" -v /opt/docker:/opt/docker -v $(pwd)/.env:/root/.env -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG} /bin/bash /scripts/redirect.sh $SCRIPT_COLLUMNS $CMD
         else
-            echo ".env not founded can't execute ${CMD} script, try to first_deploy.sh an application!!"
+            echo ".env not founded can't execute $CMD script, try to first_deploy.sh an application!!"
             echo "Or you may create a template as shell_cicd_docker.properties with APP_Name"
             exit 1
         fi
     fi
 }
-
 init(){
-    check_empty_variable
     get_collumns
     start_script
 }

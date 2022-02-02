@@ -14,4 +14,4 @@ COPY --chown=root:root ./scripts /scripts
 
 COPY --chown=root:root ./configs /configs
 
-RUN chmod 700 -R /scripts
+RUN chmod 700 -R /scripts /configs && chmod +x -R /scripts
