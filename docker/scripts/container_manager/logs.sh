@@ -7,11 +7,8 @@ entry_screen() {
     echo -e "############################"
 }
 nodes_screen() {
-    echo
     docker node ls
     echo -e "\tStack Name ---> $APP_NAME"
-
-    echo
 }
 stack_screen() {
 
@@ -36,7 +33,6 @@ stack_screen() {
                     # sleep 2
                 done
             fi
-
         done
     done
 }

@@ -9,11 +9,8 @@ entry_screen() {
     echo -e "############################"
 }
 nodes_screen() {
-    echo
     docker node ls
     echo -e "\tStack Name ---> $APP_NAME"
-
-    echo
 }
 
 stack_screen() {
@@ -33,9 +30,12 @@ stack_screen() {
             fi
         done
     done
-
 }
 
-entry_screen
-nodes_screen
-stack_screen
+init(){
+    entry_screen
+    nodes_screen
+    stack_screen
+}
+
+init

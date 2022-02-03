@@ -9,10 +9,12 @@ entry_screen() {
 }
 
 stop_stack() {
-    echo
     docker stack rm $APP_NAME
-    echo
 }
 
-entry_screen
-stop_stack
+init(){
+    entry_screen
+    stop_stack
+}
+
+init
