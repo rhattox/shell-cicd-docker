@@ -31,6 +31,7 @@ cd $DOCKER_APPS/$APP_NAME
 
 check_env_variables() {
     if [[ -f "./.env.backup" ]]; then
+        echo "Searching .env.backup at $(pwd)"
         echo "Backup env file founded! Adding to .env (~final~)"
         fgrep -vxf .env .env.backup >>.env
         tac .env | awk '{                               
@@ -47,10 +48,11 @@ check_env_variables() {
         rm -f .env
         mv .env.tmp .env
     else
-        echo "Backup not founded, skiping this step (there was no .env in git clone!)"
+        echo "Backup not founded at $(pwd), skiping this step (there was no .env in git clone!)"
     fi
 
     if [[ -f "./.env.secrets" ]]; then
+        echo "Searching .env.secrets at $(pwd)"
         echo "Secrets env file founded! Adding to .env (~final~)"
         fgrep -vxf .env .env.secrets >>.env
 
@@ -68,10 +70,11 @@ check_env_variables() {
         rm -f .env
         mv .env.tmp .env
     else
-        echo "Secrets not founded, skiping this step"
+        echo "Secrets not founded at $(pwd), skiping this step"
     fi
 
     if [[ -f "./.env.defaults" ]]; then
+        echo "Searching .env.defaults at $(pwd)"
         echo "Defaults env file founded! Adding to .env (~final~)"
         fgrep -vxf .env .env.defaults >>.env
         tac .env | awk '{                               
@@ -88,7 +91,7 @@ check_env_variables() {
         rm -f .env
         mv .env.tmp .env
     else
-        echo "Defaults not founded, skiping this step"
+        echo "Defaults not founded at $(pwd), skiping this step"
     fi
 }
 
@@ -151,7 +154,16 @@ run_python_script() {
     rm -f parser.py
 }
 
-check_env_variables
-create_python_script
-sleep 2
-run_python_script
+cp_new_env(){
+    cp -a .env ./cicdocker
+}
+
+init(){
+    check_env_variables
+    create_python_script
+    sleep 2
+    run_python_script
+    cp_new_env
+}
+
+init

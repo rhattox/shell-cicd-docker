@@ -24,7 +24,7 @@ helper_self() {
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\nAll self scripts do NOT need any params to use it."
     echo -e "If it is not working, there is something wrong, run ./setup.sh"
-    echo -e "e.g.: ln -s ./cicd_docker.sh ./setup.sh"
+    echo -e "e.g.: ln -s ./entrypoint.sh ./setup.sh"
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo ""
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
