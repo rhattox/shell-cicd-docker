@@ -1,17 +1,20 @@
 #!/bin/bash
 
-APP_NAME=$1
+APP_NAME=${1}
+DOCKER_APP_FULL_PATH=${2}
 
 load_environment_variables(){
     source /configs/environment.properties
     source /configs/shell_cicd_docker.properties
 }
 
-cd $DOCKER_APPS/$APP_NAME
+change_dir(){
+    cd ${DOCKER_APP_FULL_PATH}
+}
 
 check_env_variables() {
+    echo "Searching .env.backup at $(pwd)"
     if [[ -f "./.env.backup" ]]; then
-        echo "Searching .env.backup at $(pwd)"
         echo "Backup env file founded! Adding to .env (~final~)"
         fgrep -vxf .env .env.backup >>.env
         tac .env | awk '{                               
@@ -30,9 +33,9 @@ check_env_variables() {
     else
         echo "Backup not founded at $(pwd), skiping this step (there was no .env in git clone!)"
     fi
-
+    
+    echo "Searching .env.secrets at $(pwd)"
     if [[ -f "./.env.secrets" ]]; then
-        echo "Searching .env.secrets at $(pwd)"
         echo "Secrets env file founded! Adding to .env (~final~)"
         fgrep -vxf .env .env.secrets >>.env
 
@@ -53,8 +56,8 @@ check_env_variables() {
         echo "Secrets not founded at $(pwd), skiping this step"
     fi
 
+    echo "Searching .env.defaults at $(pwd)"
     if [[ -f "./.env.defaults" ]]; then
-        echo "Searching .env.defaults at $(pwd)"
         echo "Defaults env file founded! Adding to .env (~final~)"
         fgrep -vxf .env .env.defaults >>.env
         tac .env | awk '{                               
@@ -139,6 +142,8 @@ cp_new_env(){
 }
 
 init(){
+    load_environment_variables
+    change_dir
     check_env_variables
     create_python_script
     sleep 2
