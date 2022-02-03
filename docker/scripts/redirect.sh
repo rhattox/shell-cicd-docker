@@ -21,11 +21,10 @@ PATH_CONTAINER_MANAGER=${PATH_SCRIPTS}/container_manager
 PATH_STACK_MANAGER=${PATH_SCRIPTS}/stack_manager
 PATH_CONFIGS=/configs
 ARGS=("$@")
-SCRIPT_COLLUMNS=${ARGS[0]}
-CMD=${ARGS[1]}
-APP_NAME=${ARGS[2]}
-GIT_HTTPS=${ARGS[3]}
-GIT_TAG=${ARGS[4]}
+CMD=${ARGS[0]}
+APP_NAME=${ARGS[1]}
+GIT_HTTPS=${ARGS[2]}
+GIT_TAG=${ARGS[3]}
 
 export TERM=xterm-256color
 
@@ -71,33 +70,33 @@ select_service() {
 }
 
 do_help() {
-    /bin/bash ${PATH_SCRIPTS}/help.sh ${SCRIPT_COLLUMNS}
+    /bin/bash ${PATH_SCRIPTS}/help.sh
 }
 do_setup() {
-    /bin/bash ${PATH_SCRIPTS}/setup.sh ${SCRIPT_COLLUMNS}
+    /bin/bash ${PATH_SCRIPTS}/setup.sh
 }
 do_first_deploy() {
-    /bin/bash ${PATH_STACK_MANAGER}/first_deploy.sh ${SCRIPT_COLLUMNS} ${APP_NAME} ${GIT_HTTPS} ${GIT_TAG}
+    /bin/bash ${PATH_STACK_MANAGER}/first_deploy.sh ${APP_NAME} ${GIT_HTTPS} ${GIT_TAG}
 }
 do_deploy() {
     source /root/.env
-    /bin/bash ${PATH_STACK_MANAGER}/deploy.sh ${SCRIPT_COLLUMNS} ${APP_NAME} ${DOCKER_APP_FULL_PATH}
+    /bin/bash ${PATH_STACK_MANAGER}/deploy.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 do_start() {
     source /root/.env
-    /bin/bash ${PATH_CONTAINER_MANAGER}/start.sh ${SCRIPT_COLLUMNS} ${APP_NAME} ${DOCKER_APP_FULL_PATH}
+    /bin/bash ${PATH_CONTAINER_MANAGER}/start.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 do_stop() {
     source /root/.env
-    /bin/bash ${PATH_CONTAINER_MANAGER}/stop.sh ${SCRIPT_COLLUMNS} ${APP_NAME} ${DOCKER_APP_FULL_PATH}
+    /bin/bash ${PATH_CONTAINER_MANAGER}/stop.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 do_status() {
     source /root/.env
-    /bin/bash ${PATH_CONTAINER_MANAGER}/status.sh ${SCRIPT_COLLUMNS} ${APP_NAME} ${DOCKER_APP_FULL_PATH}
+    /bin/bash ${PATH_CONTAINER_MANAGER}/status.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 do_logs() {
     source /root/.env
-    /bin/bash ${PATH_CONTAINER_MANAGER}/logs.sh ${SCRIPT_COLLUMNS} ${APP_NAME} ${DOCKER_APP_FULL_PATH}
+    /bin/bash ${PATH_CONTAINER_MANAGER}/logs.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 
 init

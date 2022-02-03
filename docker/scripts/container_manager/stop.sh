@@ -1,9 +1,6 @@
 #!/bin/bash
 
-# basic variables
-SCRIPT_COLLUMNS=$1
-# all services variables
-APP_NAME=$2
+APP_NAME=$1
 
 entry_screen() {
     echo -e "############################"
@@ -12,10 +9,8 @@ entry_screen() {
 }
 
 stop_stack() {
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo
     docker stack rm $APP_NAME
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo
 }
 

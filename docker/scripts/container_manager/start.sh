@@ -17,10 +17,8 @@
 #
 #   Licença: GPL.
 
-
-SCRIPT_COLLUMNS=$1
-APP_NAME=$2
-DOCKER_APP_FULL_PATH=$3
+APP_NAME=$1
+DOCKER_APP_FULL_PATH=$2
 
 entry_screen() {
     echo -e "############################"
@@ -29,10 +27,8 @@ entry_screen() {
 }
 
 start_stack() {
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     cd $DOCKER_APP_FULL_PATH
     env $(cat .env | grep ^[A-Z] | xargs) docker stack deploy -c docker-swarm.yml $APP_NAME
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo
 }
 

@@ -6,10 +6,9 @@ PATH_CONTAINER_MANAGER=${PATH_SCRIPTS}/container_manager
 PATH_STACK_MANAGER=${PATH_SCRIPTS}/stack_manager
 PATH_CONFIGS=/configs
 source $PATH_CONFIGS/shell_cicd_docker.properties
-SCRIPT_COLLUMNS=$1
-APP_NAME=$2
-GIT_HTTPS=$3
-GIT_TAG=$4
+APP_NAME=$1
+GIT_HTTPS=$2
+GIT_TAG=$3
 
 test_https(){
     echo "${GIT_HTTPS}" > html.txt
@@ -29,30 +28,24 @@ test_https(){
 test_link_dir(){
     if [[ -d ${DOCKER_APPS}/${APP_NAME} ]]; then
         
-        for ((i = 0; i < ${SCRIPT_COLLUMNS}; i++)); do printf "="; done
         echo -e "\n"
         echo -e "Application already exits at: ${DOCKER_APPS}/${APP_NAME}\n Checking in ${DOCKER_STACKS}..."
         echo -e "\n"
-        for ((i = 0; i < ${SCRIPT_COLLUMNS}; i++)); do printf "="; done
         
         if [[ -d $DOCKER_STACKS/$APP_NAME-$GIT_TAG ]]; then
-            for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
             echo -e "\n"
             echo -e "Application already exits at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
             echo -e "\n"
             echo -e "Not created! Exiting!"
-            for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
             exit 1
         else
             unlink ${DOCKER_APPS}/${APP_NAME}
             test_dir_app
         fi
     else
-        for ((i = 0; i < ${SCRIPT_COLLUMNS}; i++)); do printf "="; done
         echo -e "\n"
         echo -e "Application do not exists at: ${DOCKER_APPS}/${APP_NAME}"
         echo -e "\n"
-        for ((i = 0; i < ${SCRIPT_COLLUMNS}; i++)); do printf "="; done
 
         test_dir_app
     fi    
@@ -60,15 +53,12 @@ test_link_dir(){
 
 test_dir_app() {
     if [[ -d $DOCKER_STACKS/$APP_NAME-$GIT_TAG ]]; then
-        for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
         echo -e "\n"
         echo -e "Application already exits at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
         echo -e "\n"
         echo -e "Not created! Exiting!"
-        for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
         exit 1
     else
-        for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
         echo -e "\n"
         echo -e "Application do not exists, creating home directory at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
         echo -e "\n"
@@ -78,28 +68,23 @@ test_dir_app() {
         # FIXME -- create in setup.sh script folder verification and folder creation
         # 
         mkdir -p $DOCKER_APPS
-        for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
         copy_git_source
-        for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     fi
 }
 
 copy_git_source() {
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\n"
     #git clone --branch 0.0.1-SNAPSHOT001   --single-branch --depth 1 https://github.com/bcovies/php_recybem_bndes.git ./php_recybem_bndes-0.0.1-SNAPSHOT001/
     echo "Downloading from: $GIT_HTTPS"
     git clone --branch $GIT_TAG --single-branch --depth 1 $GIT_HTTPS $DOCKER_STACKS/$APP_NAME-$GIT_TAG
     echo "Downloaded git repo sucessfully at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
     echo -e "\n"
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     create_env
 
 }
 
 create_env() {
     cd $DOCKER_STACKS/$APP_NAME-$GIT_TAG
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\n"
     echo -e "Creating .env file at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
     if [[ -f ".env" ]]; then
@@ -127,7 +112,6 @@ create_env() {
     echo "DOCKER_APPS=$DOCKER_APPS" >>.env
     echo "DOCKER_APP_FULL_PATH=$DOCKER_APPS/$APP_NAME" >>.env
     echo -e "\n"
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
 }
 create_scripts_cicd_docker() {
     cd $DOCKER_STACKS/$APP_NAME-$GIT_TAG
@@ -141,11 +125,9 @@ create_scripts_cicd_docker() {
     ln -s entrypoint.sh logs.sh
     ln -s entrypoint.sh deploy.sh
     ln -s entrypoint.sh help.sh
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\n"
     echo "Created links!"
     echo -e "\n"
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
 }
 
 update_permissions() {
@@ -162,12 +144,10 @@ entry_screen() {
 create_link() {
     cd $DOCKER_APPS
     ln -s $DOCKER_STACKS/$APP_NAME-$GIT_TAG $APP_NAME
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\n"
     echo -e "Created link at: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}"
     echo -e "Created link at: ${DOCKER_APPS}/${APP_NAME}"
     echo -e "\n"
-    for ((i = 0; i < ${SCRIPT_COLLUMNS}; i++)); do printf "="; done
 
 }
 

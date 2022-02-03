@@ -1,7 +1,5 @@
 #!/bin/bash
 
-SCRIPT_COLLUMNS=$1
-
 welcome_screen() {
 
 cat <<"EOF"
@@ -21,13 +19,10 @@ tput setaf 5
 welcome_screen
 tput sgr0
 helper_self() {
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\nAll self scripts do NOT need any params to use it."
     echo -e "If it is not working, there is something wrong, run ./setup.sh"
     echo -e "e.g.: ln -s ./entrypoint.sh ./setup.sh"
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo ""
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\nSelf Scripts:\n"
     echo -e "Scripts: start stop status logs setup and deploy"
     echo -e "Start: starts application based by docker-swarm.yml"
@@ -35,7 +30,6 @@ helper_self() {
     echo -e "Logs: logs application based by docker-swarm.yml"
     echo -e "Status: status application based by docker-swarm.yml"
     echo -e "Deploy: deploys application based by docker-swarm.yml"
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo ""
 
 }
@@ -47,7 +41,6 @@ tput sgr0
 
 first_deploy() {
     echo ""
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\nAbout first_deploy.sh"
     echo -e "\nThis is the MOST important script. You will need to:"
     echo -e "\t1-Have /opt/docker volumes available (or, you could change at cicd_docker.sh)"
@@ -65,7 +58,6 @@ first_deploy() {
     echo -e "\ne.g.: ./first_deploy.sh APP_NAME GIT_HTTPS GIT_TAG"
     echo -e "\ne.g.: ./first_deploy.sh php_recybem_bndes https://github.com/bcovies/docker_deployment_php_recybem_bndes.git 0.0.1-SNAPSHOT001"
     echo -e "\n"
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo ""
 
 }
@@ -77,7 +69,6 @@ tput sgr0
 
 first_version() {
     echo -e "\n"
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\nNotes for the first version:"
     echo -e "\nBase of app:"
     echo -e "\tFor using complete features, you will need to enable docker tcp connections and add other hostname in /etc/hosts or DNS..."
@@ -90,8 +81,6 @@ first_version() {
     echo -e "\n"
     echo -e "systemctl reload docker"
     echo -e "\n"
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
-
 }
 
 tput setab 0

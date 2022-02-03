@@ -7,9 +7,8 @@ PATH_STACK_MANAGER=${PATH_SCRIPTS}/stack_manager
 PATH_CONFIGS=/configs
 source $PATH_CONFIGS/shell_cicd_docker.properties
 # basic variables
-SCRIPT_COLLUMNS=$1
 # all services variables
-APP_NAME=$2
+APP_NAME=$1
 
 
 cd $DOCKER_APPS/$APP_NAME
