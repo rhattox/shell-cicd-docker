@@ -1,15 +1,11 @@
 #!/bin/bash
 
-#   Caminho dos scripts SEPARADO POR UTILIZAÇÃO, cuidado!
-PATH_SCRIPTS=/scripts
-PATH_CONTAINER_MANAGER=${PATH_SCRIPTS}/container_manager
-PATH_STACK_MANAGER=${PATH_SCRIPTS}/stack_manager
-PATH_CONFIGS=/configs
-source $PATH_CONFIGS/shell_cicd_docker.properties
-# basic variables
-# all services variables
 APP_NAME=$1
 
+load_environment_variables(){
+    source /configs/environment.properties
+    source /configs/shell_cicd_docker.properties
+}
 
 cd $DOCKER_APPS/$APP_NAME
 

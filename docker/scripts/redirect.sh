@@ -60,7 +60,7 @@ select_service() {
         do_help
         ;;
     *)
-        echo -e "[redirect.sh] ERROR: Service unknown!"
+        echo -e "[$(basename "$0")] ERROR: Service unknown!"
         exit 1
         ;;
     esac
