@@ -2,7 +2,6 @@
 
 # basic variables
 SCRIPT_COLLUMNS=$1
-
 HOME_PATH=/installer
 LOCAL_CONFIG_FILE=$HOME_PATH/shell_cicd_docker.properties
 LOCAL_SCRIPT_LOGS=$HOME_PATH/logs.sh

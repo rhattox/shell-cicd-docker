@@ -16,32 +16,13 @@
 #
 #   Licença: GPL.
 
-
-#   Caminho dos scripts SEPARADO POR UTILIZAÇÃO, cuidado!
-#
-#   SCRIPTS             -->     entrypoint | help | redirect | setup
-#
 PATH_SCRIPTS=/scripts
-#
-#   CONTAINER_MANAGER   -->     logs | start | status | stop
-#
 PATH_CONTAINER_MANAGER=${PATH_SCRIPTS}/container_manager
-#
-#   STACK_MANAGER       -->     deploy | first_deploy
-#
 PATH_STACK_MANAGER=${PATH_SCRIPTS}/stack_manager
-#
-#   CONFIGS
-#
 PATH_CONFIGS=/configs
-
 ARGS=("$@")
-
-# Parâmetro de número de colunas
 SCRIPT_COLLUMNS=${ARGS[0]}
-# Parâmetro de seleção do script
 CMD=${ARGS[1]}
-# Se tiver, recebe parametros do FIRST DEPLOY!
 APP_NAME=${ARGS[2]}
 GIT_HTTPS=${ARGS[3]}
 GIT_TAG=${ARGS[4]}
