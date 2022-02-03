@@ -1,32 +1,62 @@
 #!/bin/bash
 
 #   Caminho dos scripts SEPARADO POR UTILIZAÇÃO, cuidado!
-#
-#   SCRIPTS             -->     entrypoint | help | redirect | setup
-#
 PATH_SCRIPTS=/scripts
-#
-#   CONTAINER_MANAGER   -->     logs | start | status | stop
-#
 PATH_CONTAINER_MANAGER=${PATH_SCRIPTS}/container_manager
-#
-#   STACK_MANAGER       -->     deploy | first_deploy
-#
 PATH_STACK_MANAGER=${PATH_SCRIPTS}/stack_manager
-#
-#   CONFIGS
-#
 PATH_CONFIGS=/configs
-
 source $PATH_CONFIGS/shell_cicd_docker.properties
-
-# basic variables
 SCRIPT_COLLUMNS=$1
-# all services variables
 APP_NAME=$2
-# first deploy variables
 GIT_HTTPS=$3
 GIT_TAG=$4
+
+test_https(){
+    echo "${GIT_HTTPS}" > html.txt
+    sed -i 's/\b.git\b//' html.txt
+    GIT_HTTPS_CLEAN=$(cat html.txt)
+    echo "Testing url: ${GIT_HTTPS_CLEAN}"
+    RESPONSE_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" "${GIT_HTTPS_CLEAN}")
+    rm -f html.txt
+    if [[ ${RESPONSE_STATUS} == '200' ]]; then
+        echo "URL Exists!"
+    else
+        echo "URL do not exists!"
+        exit 1
+    fi
+}
+
+test_link_dir(){
+    if [[ -d ${DOCKER_APPS}/${APP_NAME} ]]; then
+        
+        for ((i = 0; i < ${SCRIPT_COLLUMNS}; i++)); do printf "="; done
+        echo -e "\n"
+        echo -e "Application already exits at: ${DOCKER_APPS}/${APP_NAME}\n Checking in ${DOCKER_STACKS}..."
+        echo -e "\n"
+        for ((i = 0; i < ${SCRIPT_COLLUMNS}; i++)); do printf "="; done
+        
+        if [[ -d $DOCKER_STACKS/$APP_NAME-$GIT_TAG ]]; then
+            for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+            echo -e "\n"
+            echo -e "Application already exits at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
+            echo -e "\n"
+            echo -e "Not created! Exiting!"
+            for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+            exit 1
+        else
+            unlink ${DOCKER_APPS}/${APP_NAME}
+            test_dir_app
+        fi
+    else
+        for ((i = 0; i < ${SCRIPT_COLLUMNS}; i++)); do printf "="; done
+        echo -e "\n"
+        echo -e "Application do not exists at: ${DOCKER_APPS}/${APP_NAME}"
+        echo -e "\n"
+        for ((i = 0; i < ${SCRIPT_COLLUMNS}; i++)); do printf "="; done
+
+        test_dir_app
+    fi    
+}
 
 test_dir_app() {
     if [[ -d $DOCKER_STACKS/$APP_NAME-$GIT_TAG ]]; then
@@ -34,7 +64,7 @@ test_dir_app() {
         echo -e "\n"
         echo -e "Application already exits at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
         echo -e "\n"
-
+        echo -e "Not created! Exiting!"
         for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
         exit 1
     else
@@ -134,14 +164,20 @@ create_link() {
     ln -s $DOCKER_STACKS/$APP_NAME-$GIT_TAG $APP_NAME
     for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
     echo -e "\n"
-    echo -e "Created link at: $DOCKER_STACKS/$APP_NAME-$GIT_TAG"
+    echo -e "Created link at: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}"
+    echo -e "Created link at: ${DOCKER_APPS}/${APP_NAME}"
     echo -e "\n"
-    for ((i = 0; i < $SCRIPT_COLLUMNS; i++)); do printf "="; done
+    for ((i = 0; i < ${SCRIPT_COLLUMNS}; i++)); do printf "="; done
 
 }
 
-entry_screen
-test_dir_app
-create_scripts_cicd_docker
-create_link
-update_permissions
+init(){
+    entry_screen
+    test_https
+    test_link_dir
+    create_scripts_cicd_docker
+    create_link
+    update_permissions
+}
+
+init

@@ -4,9 +4,10 @@ RUN apk update
 
 RUN apk add bash &&\
     apk add ncurses &&\
+    apk add curl &&\
     apk add python3 &&\
     apk add --update py-pip &&\
-    pip install python-dotenv
+    pip install python-dotenv 
 
 RUN addgroup docker -g 998 
 
