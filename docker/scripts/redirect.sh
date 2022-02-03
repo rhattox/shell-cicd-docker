@@ -16,23 +16,21 @@
 #
 #   Licença: GPL.
 
-PATH_SCRIPTS=/scripts
-PATH_CONTAINER_MANAGER=${PATH_SCRIPTS}/container_manager
-PATH_STACK_MANAGER=${PATH_SCRIPTS}/stack_manager
-PATH_CONFIGS=/configs
 ARGS=("$@")
 CMD=${ARGS[0]}
 APP_NAME=${ARGS[1]}
 GIT_HTTPS=${ARGS[2]}
 GIT_TAG=${ARGS[3]}
 
-export TERM=xterm-256color
+load_environment_variables(){
+    source /configs/environment.properties
+    source /configs/shell_cicd_docker.properties
+    export TERM=xterm-256color
+}
 
-init() {
-    if [[ -z "$CMD" ]]; then
-        echo -e "First variable is NULL, no execution."
-        exit 1
-    fi
+check_vars() {
+    echo "Var Checking at $(basename "$0")..."
+    echo "CMD: ${CMD} APP_NAME: ${APP_NAME} GIT_HTTPS: ${GIT_HTTPS} GIT_TAG: ${GIT_TAG}"
 }
 
 select_service() {
@@ -62,7 +60,7 @@ select_service() {
         do_help
         ;;
     *)
-        echo -e "Service unknown"
+        echo -e "[redirect.sh] ERROR: Service unknown!"
         exit 1
         ;;
     esac
@@ -76,28 +74,34 @@ do_setup() {
     /bin/bash ${PATH_SCRIPTS}/setup.sh
 }
 do_first_deploy() {
-    /bin/bash ${PATH_STACK_MANAGER}/first_deploy.sh ${APP_NAME} ${GIT_HTTPS} ${GIT_TAG}
+    /bin/bash ${PATH_SCRIPTS_STACK_MANAGER}/first_deploy.sh ${APP_NAME} ${GIT_HTTPS} ${GIT_TAG}
 }
 do_deploy() {
     source /root/.env
-    /bin/bash ${PATH_STACK_MANAGER}/deploy.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
+    /bin/bash ${PATH_SCRIPTS_STACK_MANAGER}/deploy.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 do_start() {
     source /root/.env
-    /bin/bash ${PATH_CONTAINER_MANAGER}/start.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
+    /bin/bash ${PATH_SCRIPTS_CONTAINER_MANAGER}/start.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 do_stop() {
     source /root/.env
-    /bin/bash ${PATH_CONTAINER_MANAGER}/stop.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
+    /bin/bash ${PATH_SCRIPTS_CONTAINER_MANAGER}/stop.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 do_status() {
     source /root/.env
-    /bin/bash ${PATH_CONTAINER_MANAGER}/status.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
+    /bin/bash ${PATH_SCRIPTS_CONTAINER_MANAGER}/status.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 do_logs() {
     source /root/.env
-    /bin/bash ${PATH_CONTAINER_MANAGER}/logs.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
+    /bin/bash ${PATH_SCRIPTS_CONTAINER_MANAGER}/logs.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
 }
 
+init(){
+    check_vars
+    load_environment_variables
+    select_service
+}
+
+
 init
-select_service

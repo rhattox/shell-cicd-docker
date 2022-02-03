@@ -17,26 +17,26 @@
 #   Licença: GPL.
 # -----------------------------------------------------------------------------------------------------------
 
-DOCKER_IMAGE=cicdocker
-DOCKER_TAG=0.0.1-SNAPSHOT003
-PATH_SCRIPTS=/scripts
-PATH_CONTAINER_MANAGER=${PATH_SCRIPTS}/container_manager
-PATH_STACK_MANAGER=${PATH_SCRIPTS}/stack_manager
-PATH_CONFIGS=/configs
 CMD=$(basename "$0")
-
 ARGS=("$@")
 
-#   Faz verificação do ponto de entrada e cria o container dependendo da entrada.
-start_script() {
+
+load_environment_variables(){
+    source /configs/environment.properties
+    source /configs/shell_cicd_docker.properties
+}
+
+entrypoint() {
     if [[ -f ./.env ]]; then
         docker run --rm --network="host" -v /opt/docker:/opt/docker -v $(pwd)/.env:/root/.env -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG} /bin/bash ${PATH_SCRIPTS}/redirect.sh ${CMD} "${ARGS[@]}"
     else
         docker run --rm --network="host" -v /opt/docker:/opt/docker -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG} /bin/bash ${PATH_SCRIPTS}/redirect.sh ${CMD} "${ARGS[@]}"
     fi
 }
+
 init(){
-    start_script
+    load_environment_variables
+    entrypoint
 }
 
 init
