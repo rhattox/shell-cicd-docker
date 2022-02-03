@@ -72,11 +72,12 @@ copy_git_source() {
     # git clone --branch 0.0.1-SNAPSHOT001   --single-branch --depth 1 https://github.com/bcovies/php_recybem_bndes.git ./php_recybem_bndes-0.0.1-SNAPSHOT001/
     echo "Downloading from: ${GIT_HTTPS}"
     git clone --branch ${GIT_TAG} --single-branch --depth 1 ${GIT_HTTPS} ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}
-        if [[ -z "$(ls -A ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG})"  ]]; then
-            echo "Downloaded git repo sucessfully at: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}"
-        else 
+    DIRCOUNT=$(ls -1A ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG} | wc -l)
+        if [ $DIRCOUNT -eq 0 ]; then
             echo "[$(basename "$0")] ERROR: Application hasn't been downloaded at: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG} !"
             exit 1
+        else
+            echo "Downloaded git repo sucessfully at: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}"
         fi
     create_env
 }
