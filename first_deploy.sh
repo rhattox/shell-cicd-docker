@@ -1,1 +1,0 @@
-./docker/scripts/entrypoint.sh
