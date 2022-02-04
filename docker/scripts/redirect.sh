@@ -98,7 +98,7 @@ do_logs() {
 }
 
 init(){
-    check_vars
+    # check_vars
     load_environment_variables
     select_service
 }
