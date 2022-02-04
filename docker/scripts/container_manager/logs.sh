@@ -2,7 +2,10 @@
 
 APP_NAME=$1
 
+source /configs/tput.sh --source-only
+
 entry_screen() {
+    clear
     echo "############################"
     echo "######  LOGS SCRIPT    #####"
     echo "############################"
@@ -13,7 +16,9 @@ nodes_screen() {
     echo "------------------------------------------------------------"
     docker node ls
     echo "------------------------------------------------------------"
+    set_yellow
     echo "Stack Name ---> $APP_NAME"
+    clean_tput
     echo "------------------------------------------------------------"
 }
 
@@ -25,18 +30,19 @@ stack_screen() {
     for ((i_for_nodes = 0; i_for_nodes < $number_nodes; i_for_nodes++)); do
         for x in "${arr_ready[$i_for_nodes]}"; do
             if [[ ! "$x" == "Down" ]]; then
-                echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-                tput setaf 2
-                echo "------------------------------------------------------------"
+                set_blue
                 echo "Node: ${arr_nodes[$i_for_nodes]}"
+                clean_tput
                 echo "------------------------------------------------------------"
-                tput sgr0
                 docker -H ${arr_nodes[$i_for_nodes]} ps -q --format "{{.ID}}" --no-trunc -f name=$APP_NAME | while read CONTAINER_ID; do
-                    tput setaf 3
+                    set_green
                     echo "Container ID: $CONTAINER_ID"
+                    clean_tput
                     echo "------------------------------------------------------------"
-                    tput sgr0
+                    set_magenta
+                    set_blink
                     echo -e "LOGS OUTPUT:\n"
+                    clean_tput
                     docker -H ${arr_nodes[$i_for_nodes]} logs $CONTAINER_ID
                     # sleep 2
                     echo "------------------------------------------------------------"

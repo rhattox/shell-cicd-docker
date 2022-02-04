@@ -5,6 +5,7 @@ GIT_HTTPS=${2}
 GIT_TAG=${3}
 
 entry_screen() {
+    clear
     echo "##################################"
     echo "######  FIRST DEPLOY SCRIPT  #####"
     echo "##################################"
@@ -13,6 +14,7 @@ entry_screen() {
 load_environment_variables(){
     source /configs/environment.properties
     source /configs/shell_cicd_docker.properties
+    source /configs/tput.sh --source-only
 }
 
 check_vars() {
@@ -26,12 +28,12 @@ check_https_link(){
     sed -i 's/\b.git\b//' ${GIT_HTTPS_FILE_NAME}
     GIT_HTTPS_CLEAN=$(cat ${GIT_HTTPS_FILE_NAME})
     echo "------------------------------------------------------------"
-    echo "Testing github url: ${GIT_HTTPS_CLEAN}"
+    set_yellow; echo "Testing github url: ${GIT_HTTPS_CLEAN}"; clean_tput;
     echo "------------------------------------------------------------"
     RESPONSE_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" "${GIT_HTTPS_CLEAN}")
     rm -f ${GIT_HTTPS_FILE_NAME}
     if [[ ${RESPONSE_STATUS} == '200' ]]; then
-        echo "URL response ${RESPONSE_STATUS}! OK!"
+       set_green; echo "URL response ${RESPONSE_STATUS}! OK!"; clean_tput;
     echo "------------------------------------------------------------"
     else
         echo "[$(basename "$0")] ERROR: URL response ${RESPONSE_STATUS}!"
@@ -42,45 +44,58 @@ check_https_link(){
 
 test_link_dir(){
     if [[ -d ${DOCKER_APPS}/${APP_NAME} ]]; then
-        echo "Application already exits at: ${DOCKER_APPS}/${APP_NAME}!"
-        echo "------------------------------------------------------------"
-        echo "Checking in ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}..."
+        echo "Application already exits at: ${DOCKER_APPS}/${APP_NAME}!!"
+        echo "It's OK if you are upgrading deployment tag..."
         echo "------------------------------------------------------------"
         if [[ -d ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG} ]]; then
+            set_red
+            set_blink 
             echo "[$(basename "$0")] ERROR: Application already exits at: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}!"
+            clean_tput
+            echo "There is nothing to do with this args:"
+            echo -e "\t${APP_NAME}"
+            echo -e "\t${GIT_HTTPS}"
+            echo -e "\t${GIT_TAG}"
             echo "------------------------------------------------------------"
             exit 1
         else
+            echo "Upgrading version... Removing Link at: ${DOCKER_APPS}/${APP_NAME}"
+            echo "------------------------------------------------------------"
             unlink ${DOCKER_APPS}/${APP_NAME}
             test_dir_app
         fi
     else
         echo "Application do not exists at: ${DOCKER_APPS}/${APP_NAME}"
+        echo "------------------------------------------------------------"
         test_dir_app
     fi    
 }
 
 test_dir_app() {
     if [[ -d ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG} ]]; then
-        echo "------------------------------------------------------------"
-        echo "[$(basename "$0")] ERROR: Application already exits at: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG} !"
-        echo "------------------------------------------------------------"
+        set_red
+        set_blink 
+        echo "[$(basename "$0")] ERROR: Application already exits at: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}!!!"
+        clean_tput
+        echo "But, there is no link in ${DOCKER_APPS}/${APP_NAME}"
+        echo "Creating a new link for this app for you..."
+        create_link_app
         exit 1
     else
-        echo "------------------------------------------------------------"
-        echo "Application do not exists, creating home directory at: "
-        echo "${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}"
-        echo "${DOCKER_APPS}/${APP_NAME}"
-        mkdir -p ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}
-        mkdir -p ${DOCKER_APPS}
+        create_dirs
         copy_git_source
     fi
 }
 
+create_dirs(){
+        mkdir -p ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}
+        mkdir -p ${DOCKER_APPS}
+}
+
+
 copy_git_source() {
     # Example
     # git clone --branch 0.0.1-SNAPSHOT001   --single-branch --depth 1 https://github.com/bcovies/php_recybem_bndes.git ./php_recybem_bndes-0.0.1-SNAPSHOT001/
-    echo "------------------------------------------------------------"
     echo "Downloading from: ${GIT_HTTPS}"
     echo "------------------------------------------------------------"
     git clone --branch ${GIT_TAG} --single-branch --depth 1 ${GIT_HTTPS} ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG} > /dev/null 2>&1
@@ -89,34 +104,38 @@ copy_git_source() {
             echo "[$(basename "$0")] ERROR: Application hasn't been downloaded at: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG} !"
             exit 1
         else
-            echo "Downloaded git repo sucessfully at: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}"
+            echo "Downloaded git repo sucessfully at MAIN PATH: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}"
             echo "------------------------------------------------------------"
         fi
 }
 
 create_env() {
     cd ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}
-    echo "Creating .env file at: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}"
-    echo "------------------------------------------------------------"
     if [[ -f ".env" ]]; then
+        set_yellow
+        set_blink
         echo "[ATTENTION] File .env already exists, changing to .env.backup..."
+        clean_tput
         echo "--> be carefull with secrets! READ ./help.sh"
         echo "------------------------------------------------------------"
         mv .env .env.backup
     fi
     if [[ -f ".gitignore" ]]; then
-        echo ".gitignore exists!! Checking if is OK..."
+        set_yellow
+        set_blink
+        echo "[ATTENTION] File .gitignore exists!! Checking if is OK..."
+        clean_tput
         echo "------------------------------------------------------------"
         GREP_FILES=('cicdocker/' '.env' '.env.secrets')
         for LOOP_VAR in "${GREP_FILES[@]}"; do
             TEST_GITIGNORE=$(grep -iwR "${LOOP_VAR}" .gitignore)
             if [[ -z ${TEST_GITIGNORE} ]]; then
-                echo "Adicionado: ${LOOP_VAR} no .gitignore"
+                echo "Added at .gitignore: ${LOOP_VAR}"
                 echo "${LOOP_VAR}" >>.gitignore
             fi
         done
     else
-        echo ".gitignore NOT founded! Creating one..."
+        echo ".gitignore NOT founded! Creating one with '.env' 'cicdocker/' '.env.secrets'"
         echo "cicdocker/" >> .gitignore
         echo ".env" >> .gitignore
         echo ".env.secrets" >> .gitignore
@@ -143,22 +162,23 @@ create_scripts_cicd_docker() {
     ln -s entrypoint.sh logs.sh
     ln -s entrypoint.sh deploy.sh
     ln -s entrypoint.sh help.sh
-    echo "------------------------------------------------------------"
-    echo "Created links for scripts!!"
 }
 
 create_link_app() {
     cd ${DOCKER_APPS}
     ln -s ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG} ${APP_NAME}
     echo "------------------------------------------------------------"
-    echo "Created link at: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}"
-    echo "Created link at: ${DOCKER_APPS}/${APP_NAME}"
+    set_green; echo "Created link at: ${DOCKER_APPS}/${APP_NAME}"; clean_tput;
     echo "------------------------------------------------------------"
 }
 
 update_permissions() {
     chmod -R 750 ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}
     chown -R root:docker ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}
+}
+final_message(){
+    echo "You may now run ./deploy at ${DOCKER_APPS}/${APP_NAME}/cicdocker to create directories from volumes!"
+    echo "------------------------------------------------------------"
 }
 
 init(){
@@ -171,6 +191,7 @@ init(){
     create_scripts_cicd_docker
     create_link_app
     update_permissions
+    final_message
 }
 
 init
