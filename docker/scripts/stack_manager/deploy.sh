@@ -85,6 +85,27 @@ check_env_variables() {
         echo "Defaults not founded at $(pwd), skiping this step"
     fi
     echo "------------------------------------------------------------"
+    echo "Searching .env.local at $(pwd)"
+    if [[ -f "./.env.local" ]]; then
+        echo "Local env file founded! Adding to .env (~final~)"
+        fgrep -vxf .env .env.local >>.env
+        tac .env | awk '{                               
+            line = $0                                   
+            sub(/#.*/, "")                              
+            if (match($0, /([[:alnum:]_]+)=/)) {        
+                var = substr($0, RSTART, RLENGTH - 1)
+                if (! seen[var]++) print line
+            } else { 
+                print line
+            } 
+                }' | tac >.env.tmp
+
+        rm -f .env
+        mv .env.tmp .env
+    else
+        echo "Local not founded at $(pwd), skiping this step"
+    fi
+    echo "------------------------------------------------------------"
 }
 
 create_python_script() {
