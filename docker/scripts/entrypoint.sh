@@ -21,7 +21,7 @@ CMD=$(basename "$0")
 ARGS=("$@")
 
 DOCKER_IMAGE=cicdocker
-DOCKER_TAG=0.0.3-SNAPSHOT001
+DOCKER_TAG=0.0.3
 
 init() {
     if [[ -f ./.env ]]; then

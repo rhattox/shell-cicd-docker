@@ -223,6 +223,9 @@ run_confd_script(){
                 set_blink
                 echo "[$(basename "$0")] ERROR: Can't create templates!! Check messages before this one..."
                 clean_tput
+                set_red
+                echo "Probably is an .env.secrets that's not configured..."
+                clean_tput
                 echo "------------------------------------------------------------"
                 exit 1
             else
