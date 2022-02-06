@@ -5,7 +5,7 @@ DOCKER_APP_FULL_PATH=$2
 
 entry_screen() {
     echo "############################"
-    echo "######  SCRIPT START  #####"
+    echo "######  SCRIPT START  ######"
     echo "############################"
     sleep 1
 }
