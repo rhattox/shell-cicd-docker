@@ -26,7 +26,6 @@ check_vars() {
 check_git_repo_mode() {
 
     if [[ ${GIT_REPO_MODE} == 'private' ]];then
-        echo "Tratar url"
         check_https_link_private
     else
         echo "publico"
@@ -185,7 +184,7 @@ create_env() {
         echo "[ATTENTION] File .gitignore exists!! Checking if is OK..."
         clean_tput
         echo "------------------------------------------------------------"
-        GREP_FILES=('cicdocker/' '.env' '.env.secrets')
+        GREP_FILES=('cicdocker/' '.env' '.env.secrets' '.env.configs/')
         for LOOP_VAR in "${GREP_FILES[@]}"; do
             TEST_GITIGNORE=$(grep -iwR "${LOOP_VAR}" .gitignore)
             if [[ -z ${TEST_GITIGNORE} ]]; then

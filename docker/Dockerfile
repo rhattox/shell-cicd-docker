@@ -13,6 +13,14 @@ RUN addgroup docker -g 998
 
 COPY --chown=root:root ./scripts /scripts
 
+COPY --chown=root:root ./packages/confd-0.16.0-linux-amd64 /opt/confd/bin/confd
+
 COPY --chown=root:root ./configs /configs
+
+RUN chmod +x /opt/confd/bin/confd 
+
+RUN export PATH="$PATH:/opt/confd/bin"
+
+RUN mkdir /tmp/confd
 
 RUN chmod 700 -R /scripts /configs && chmod +x -R /scripts
