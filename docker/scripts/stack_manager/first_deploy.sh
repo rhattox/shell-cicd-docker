@@ -3,6 +3,7 @@
 APP_NAME=${1}
 GIT_HTTPS=${2}
 GIT_TAG=${3}
+GIT_REPO_MODE=${4}
 
 entry_screen() {
     clear
@@ -19,10 +20,39 @@ load_environment_variables(){
 
 check_vars() {
     echo "Var Checking at $(basename "$0")..."
-    echo "CMD: ${CMD} APP_NAME: ${APP_NAME} GIT_HTTPS: ${GIT_HTTPS} GIT_TAG: ${GIT_TAG}"
+    echo "CMD: ${CMD} APP_NAME: ${APP_NAME} GIT_HTTPS: ${GIT_HTTPS} GIT_TAG: ${GIT_TAG} GIT_REPO_MODE:${GIT_REPO_MODE}"
 }
 
-check_https_link(){
+check_git_repo_mode() {
+
+    if [[ ${GIT_REPO_MODE} == 'private' ]];then
+        echo "Tratar url"
+        check_https_link_private
+    else
+        echo "publico"
+        check_https_link_public
+    fi
+
+}
+
+check_https_link_private(){
+
+    git clone --branch ${GIT_TAG} --single-branch --depth 1 ${GIT_HTTPS} /tmp/git-tmp-test > /dev/null 2>&1
+    
+    DIRCOUNT=$(ls -1A /tmp/git-tmp-test | wc -l)
+    if [ $DIRCOUNT -eq 0 ]; then
+        set_red
+        set_blink
+        echo "[$(basename "$0")] ERROR: Invalid URL, check again !!"
+        clean_tput
+        rm -rf /tmp/git-tmp-test
+        exit 1
+    else
+       set_green; echo "URL response OK!"; clean_tput;
+    fi
+}
+
+check_https_link_public(){
     GIT_HTTPS_FILE_NAME="html_link.txt"
     echo "${GIT_HTTPS}" > ${GIT_HTTPS_FILE_NAME}
     sed -i 's/\b.git\b//' ${GIT_HTTPS_FILE_NAME}
@@ -36,7 +66,33 @@ check_https_link(){
        set_green; echo "URL response ${RESPONSE_STATUS}! OK!"; clean_tput;
     echo "------------------------------------------------------------"
     else
+        set_red
+        set_blink
         echo "[$(basename "$0")] ERROR: URL response ${RESPONSE_STATUS}!"
+        clean_tput
+        echo "------------------------------------------------------------"
+        exit 1
+    fi
+}
+
+check_https_link_public(){
+    GIT_HTTPS_FILE_NAME="html_link.txt"
+    echo "${GIT_HTTPS}" > ${GIT_HTTPS_FILE_NAME}
+    sed -i 's/\b.git\b//' ${GIT_HTTPS_FILE_NAME}
+    GIT_HTTPS_CLEAN=$(cat ${GIT_HTTPS_FILE_NAME})
+    echo "------------------------------------------------------------"
+    set_yellow; echo "Testing github url: ${GIT_HTTPS_CLEAN}"; clean_tput;
+    echo "------------------------------------------------------------"
+    RESPONSE_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" "${GIT_HTTPS_CLEAN}")
+    rm -f ${GIT_HTTPS_FILE_NAME}
+    if [[ ${RESPONSE_STATUS} == '200' ]]; then
+       set_green; echo "URL response ${RESPONSE_STATUS}! OK!"; clean_tput;
+    echo "------------------------------------------------------------"
+    else
+        set_blink
+        set_red
+        echo "[$(basename "$0")] ERROR: URL response ${RESPONSE_STATUS}!"
+        clean_tput
         echo "------------------------------------------------------------"
         exit 1
     fi
@@ -101,7 +157,10 @@ copy_git_source() {
     git clone --branch ${GIT_TAG} --single-branch --depth 1 ${GIT_HTTPS} ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG} > /dev/null 2>&1
     DIRCOUNT=$(ls -1A ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG} | wc -l)
         if [ $DIRCOUNT -eq 0 ]; then
+            set_blink
+            set_red
             echo "[$(basename "$0")] ERROR: Application hasn't been downloaded at: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG} !"
+            clean_tput
             exit 1
         else
             echo "Downloaded git repo sucessfully at MAIN PATH: ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}"
@@ -162,6 +221,7 @@ create_scripts_cicd_docker() {
     ln -s entrypoint.sh logs.sh
     ln -s entrypoint.sh deploy.sh
     ln -s entrypoint.sh help.sh
+    ln -s entrypoint.sh destroy.sh
 }
 
 create_link_app() {
@@ -184,8 +244,8 @@ final_message(){
 init(){
     entry_screen
     load_environment_variables
+    check_git_repo_mode
     # check_vars
-    check_https_link
     test_link_dir
     create_env
     create_scripts_cicd_docker

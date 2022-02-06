@@ -21,6 +21,7 @@ CMD=${ARGS[0]}
 APP_NAME=${ARGS[1]}
 GIT_HTTPS=${ARGS[2]}
 GIT_TAG=${ARGS[3]}
+GIT_REPO_MODE=${ARGS[4]}
 
 load_environment_variables(){
     source /configs/environment.properties
@@ -59,6 +60,9 @@ select_service() {
     help.sh)
         do_help
         ;;
+    destroy.sh)
+        do_destroy
+        ;;
     *)
         echo -e "[$(basename "$0")] ERROR: Service unknown!"
         exit 1
@@ -67,6 +71,10 @@ select_service() {
 
 }
 
+do_destroy(){
+    source /root/.env
+    /bin/bash ${PATH_SCRIPTS_STACK_MANAGER}/destroy.sh ${APP_NAME} ${DOCKER_APP_FULL_PATH}
+}
 do_help() {
     /bin/bash ${PATH_SCRIPTS}/help.sh
 }
@@ -74,7 +82,7 @@ do_setup() {
     /bin/bash ${PATH_SCRIPTS}/setup.sh
 }
 do_first_deploy() {
-    /bin/bash ${PATH_SCRIPTS_STACK_MANAGER}/first_deploy.sh ${APP_NAME} ${GIT_HTTPS} ${GIT_TAG}
+    /bin/bash ${PATH_SCRIPTS_STACK_MANAGER}/first_deploy.sh ${APP_NAME} ${GIT_HTTPS} ${GIT_TAG} ${GIT_REPO_MODE}
 }
 do_deploy() {
     source /root/.env

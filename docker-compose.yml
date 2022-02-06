@@ -1,5 +1,5 @@
 version: '3.9'
 services:
   app:
-    image: cicdocker:0.0.1
+    image: cicdocker:0.0.2-SNAPSHOT001
     build: ./docker

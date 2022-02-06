@@ -39,9 +39,12 @@ stack_screen() {
                 set_green
                 echo "Containers:"
                 clean_tput
+                set_magenta
+                echo "------------------------------------------------------------"
+                clean_tput
                 OUTPUT_LINES=$(DOCKER_HOST=${arr_nodes[$i_for_nodes]} docker ps -a --no-trunc -f name=$APP_NAME | wc -l)
                 if [[ $OUTPUT_LINES != 1 ]]; then
-                    DOCKER_HOST=${arr_nodes[$i_for_nodes]} docker ps --format "Image:\t{{.Image}}\nID:\t{{.ID}}\nName:\t{{.Names}}\nStatus:\t{{.Status}}\nPorts:\t{{.Ports}}\n$(set_blink; set_yellow)State:\t{{.State}}$(clean_tput)\nNetworks:\t{{.Networks}}\nMounts:\t{{.Mounts}}\nLabels:\t{{.Labels}}\nSize:\t{{.Size}}\nRunningFor:\t{{.RunningFor}}\nCreatedAt:\t{{.CreatedAt}}\nCommand:\t{{.Command}}\nMount:\t{{.Mounts}}\nRunning:\t{{.RunningFor}}\n" --no-trunc -f name=$APP_NAME
+                    DOCKER_HOST=${arr_nodes[$i_for_nodes]} docker ps --format "Image:\t{{.Image}}\nID:\t{{.ID}}\nName:\t{{.Names}}\nStatus:\t{{.Status}}\nPorts:\t{{.Ports}}\n$(set_blink; set_yellow)State:\t{{.State}}$(clean_tput)\nNetworks:\t{{.Networks}}\nMounts:\t{{.Mounts}}\nLabels:\t{{.Labels}}\nSize:\t{{.Size}}\nRunningFor:\t{{.RunningFor}}\nCreatedAt:\t{{.CreatedAt}}\nCommand:\t{{.Command}}\nMount:\t{{.Mounts}}\nRunning:\t{{.RunningFor}}\n$(set_magenta)------------------------------------------------------------$(clean_tput)" --no-trunc -f name=$APP_NAME
                 fi
             fi
         done
