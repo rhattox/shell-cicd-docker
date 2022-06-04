@@ -81,6 +81,8 @@ first_version() {
     echo -e "\n"
     echo -e "systemctl reload docker"
     echo -e "\n"
+    echo -e "systemctl daemon-reload"
+    echo -e "If you did all steps above and still cant connect to your localhost machine, please reboot the system or add your hostname to the /etc/hosts and consider to reboot."
 }
 
 tput setab 0

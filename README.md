@@ -39,3 +39,13 @@ For that was made 5 scripts:
     ![](./gifs/usage.gif)
 
 
+
+
+
+# needs to update
+
+systemctl daemon-reload
+
+./help
+
+adicionar permissão de grupo do usuário
