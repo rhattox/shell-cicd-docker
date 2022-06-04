@@ -56,7 +56,7 @@ first_deploy() {
     echo -e "\t5.3- .env.secrets -- must be used created or send (rundeck, for instance) after ./first_deploy.sh and then ./deploy.sh to merge with .env"
     echo -e "\t5.4- .gitignore -- will be created if do not exists and added (.env .env.secrets -- all scripts.sh)"
     echo -e "\ne.g.: ./first_deploy.sh APP_NAME GIT_HTTPS GIT_TAG"
-    echo -e "\ne.g.: ./first_deploy.sh php_recybem_bndes https://github.com/bcovies/docker_deployment_php_recybem_bndes.git 0.0.1-SNAPSHOT001"
+    echo -e "\ne.g.: ./first_deploy.sh example_app https://github.com/bcovies/shell_cicd_example_repo.git 0.0.1-SNAPSHOT003"
     echo -e "\n"
     echo ""
 
