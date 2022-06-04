@@ -157,7 +157,7 @@ words = [w.replace('DOCKER_VOLUMES_CONFIGS', DOCKER_VOLUMES_CONFIGS) for w in wo
 words = [w.replace('DOCKER_VOLUMES_LOGS', DOCKER_VOLUMES_LOGS) for w in words]
 
 uid = pwd.getpwnam("root").pw_uid
-gid = grp.getgrnam("docker").gr_gid
+gid = grp.getgrnam("root").gr_gid
 
 for x in words:
     if (os.path.exists(x)):

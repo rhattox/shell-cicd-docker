@@ -233,7 +233,8 @@ create_link_app() {
 
 update_permissions() {
     chmod -R 750 ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}
-    chown -R root:docker ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}
+    chown -R root:root ${DOCKER_STACKS}/${APP_NAME}-${GIT_TAG}
+    echo "Updating permissions..."
 }
 final_message(){
     echo "You may now run ./deploy at ${DOCKER_APPS}/${APP_NAME}/cicdocker to create directories from volumes!"
